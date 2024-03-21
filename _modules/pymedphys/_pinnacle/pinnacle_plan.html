@@ -1,0 +1,924 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pymedphys._pinnacle.pinnacle_plan &#8212; PyMedPhys</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/style.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="../../../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
+
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/clipboard.min.js"></script>
+    <script src="../../../_static/copybutton.js"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../_static/design-tabs.js"></script>
+    <script async="async" src="https://www.googletagmanager.com/gtag/js?id=UA-26591325-7"></script>
+    <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', 'UA-26591325-7');
+            </script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pymedphys/_pinnacle/pinnacle_plan';</script>
+    <link rel="canonical" href="https://docs.pymedphys.com/_modules/pymedphys/_pinnacle/pinnacle_plan.html" />
+    <link rel="shortcut icon" href="../../../_static/pymedphys.svg"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/pymedphys.svg" class="logo__image only-light" alt="PyMedPhys - Home"/>
+    <script>document.write(`<img src="../../../_static/pymedphys.svg" class="logo__image only-dark" alt="PyMedPhys - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../statement-of-need.html">Statement of Need</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../release-notes.html">Release Notes</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Users Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../users/get-started/index.html">Getting Started</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../users/get-started/quick-start.html">Quick Start Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../users/get-started/cli.html">Using the CLI</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../users/howto/index.html">How-to Guides</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../users/howto/gamma/index.html">Gamma</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../users/howto/gamma/speed-up.html">Speeding up gamma calculations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../users/howto/gamma/1D-from-csv.html">Gamma from 1D ASCII data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../users/howto/gamma/effect-of-noise.html">The Effects of Noise on Gamma</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../users/howto/gamma/from-dicom.html">Gamma from DICOM</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../users/howto/add-a-linac.html">Adding a Linac</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../users/howto/tunnels/index.html">Tunnels</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../users/howto/tunnels/samba.html">SAMBA SSH Tunnelling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../users/howto/tunnels/rsync.html">Backups using rsync</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../users/background/index.html">Background</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../users/background/autocontouring.html">Automatic Contouring Project</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../users/background/elekta-logfiles.html">Elekta Logfile Decoding and Indexing</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../users/ref/index.html">Technical Reference</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../users/ref/lib/index.html">Library Reference</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-7"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../genindex.html">Alphabetical Index</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../users/ref/lib/dicom.html">DICOM</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../users/ref/lib/gamma.html">Gamma</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../users/ref/lib/mosaiq.html">Mosaiq</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../users/ref/lib/metersetmap.html">MetersetMap</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../users/ref/lib/trf.html">TRF</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../users/ref/lib/electronfactors.html">Electron Cutout Factors</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../users/ref/lib/experimental/index.html">Experimental Modules</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../users/ref/lib/experimental/pinnacle.html">Pinnacle Export Tool</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../users/ref/lib/experimental/pseudonymisation.html">Pseudonymisation Tool</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../users/ref/cli/index.html">CLI Reference</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-9"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../users/ref/cli/dicom.html">DICOM Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../users/ref/cli/trf.html">Elekta Binary Logfiles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../users/ref/cli/icom.html">iCom listener</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../users/ref/cli/pinnacle.html">Pinnacle Export Tool</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../users/ref/cli/pseudonymisation.html">Pseudonymisation Tool</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Contributors Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../contrib/index.html">Overview</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../contrib/info/index.html">Repository Information</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-10"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../contrib/info/file-structure.html">Repository File Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../contrib/info/docs-guide.html">Documentation Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../contrib/info/release-guide.html">pymedphys Release Procedure</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../contrib/setups/index.html">Workstation Setup Guides</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-11"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../contrib/setups/setup-win.html">Windows Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../contrib/setups/setup-linux.html">Linux Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../contrib/setups/setup-mac.html">MacOS Setup</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../contrib/tips/index.html">Tips &amp; Tricks</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-12"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../contrib/tips/add-jupyter-kernel.html">Add Jupyter kernel with <em>poetry</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../contrib/tips/win-open-ssh.html">Setting up OpenSSH on Windows 10</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../contrib/dive/index.html">Deep Dive</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-13"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../contrib/dive/why-open-source.html">Why Open Source?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../contrib/dive/create-streamlit-exe.html">Creating a Streamlit Executable</a></li>
+</ul>
+</li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/pymedphys/pymedphys" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/pymedphys/pymedphys/issues/new?title=Issue%20on%20page%20%2F_modules/pymedphys/_pinnacle/pinnacle_plan.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <h1>Source code for pymedphys._pinnacle.pinnacle_plan</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (C) 2019 South Western Sydney Local Health District,</span>
+<span class="c1"># University of New South Wales</span>
+
+<span class="c1"># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
+<span class="c1"># you may not use this file except in compliance with the License.</span>
+<span class="c1"># You may obtain a copy of the License at</span>
+
+<span class="c1">#     http://www.apache.org/licenses/LICENSE-2.0</span>
+
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+
+<span class="c1"># This work is derived from:</span>
+<span class="c1"># https://github.com/AndrewWAlexander/Pinnacle-tar-DICOM</span>
+<span class="c1"># which is released under the following license:</span>
+
+<span class="c1"># Copyright (c) [2017] [Colleen Henschel, Andrew Alexander]</span>
+
+<span class="c1"># Permission is hereby granted, free of charge, to any person obtaining a copy</span>
+<span class="c1"># of this software and associated documentation files (the &quot;Software&quot;), to deal</span>
+<span class="c1"># in the Software without restriction, including without limitation the rights</span>
+<span class="c1"># to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</span>
+<span class="c1"># copies of the Software, and to permit persons to whom the Software is</span>
+<span class="c1"># furnished to do so, subject to the following conditions:</span>
+
+<span class="c1"># The above copyright notice and this permission notice shall be included in all</span>
+<span class="c1"># copies or substantial portions of the Software.</span>
+
+<span class="c1"># THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
+<span class="c1"># IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
+<span class="c1"># FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE</span>
+<span class="c1"># AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</span>
+<span class="c1"># LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</span>
+<span class="c1"># OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE</span>
+<span class="c1"># SOFTWARE.</span>
+
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+<span class="kn">from</span> <span class="nn">pymedphys._imports</span> <span class="kn">import</span> <span class="n">pydicom</span>
+
+<span class="kn">from</span> <span class="nn">.pinn_yaml</span> <span class="kn">import</span> <span class="n">pinn_to_dict</span>
+<span class="kn">from</span> <span class="nn">.rtstruct</span> <span class="kn">import</span> <span class="n">find_iso_center</span>
+
+<span class="c1"># Medical Connections offers free valid UIDs</span>
+<span class="c1"># (http://www.medicalconnections.co.uk/FreeUID.html)</span>
+<span class="c1"># Their service was used to obtain the following root UID for this tool:</span>
+<span class="n">UID_PREFIX</span> <span class="o">=</span> <span class="s2">&quot;1.2.826.0.1.3680043.10.202.&quot;</span>
+
+
+<div class="viewcode-block" id="PinnaclePlan"><a class="viewcode-back" href="../../../users/ref/lib/experimental/pinnacle.html#pymedphys.pinnacle.PinnaclePlan">[docs]</a><span class="k">class</span> <span class="nc">PinnaclePlan</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents a plan within the Pinnacle data.</span>
+
+<span class="sd">    This class manages the data specific to a plan within a Pinnacle dataset.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        pinnacle : PinnacleExport</span>
+<span class="sd">            PinnacleExport object representing the dataset.</span>
+<span class="sd">        path : str</span>
+<span class="sd">            Path to raw Pinnacle data (directoy containing &#39;Patient&#39; file).</span>
+<span class="sd">        plan : dict</span>
+<span class="sd">            Plan info dict from &#39;Patient&#39; file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pinnacle</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">plan</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pinnacle</span> <span class="o">=</span> <span class="n">pinnacle</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="n">path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_plan_info</span> <span class="o">=</span> <span class="n">plan</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_machine_info</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Data of the machines used for this plan</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_trials</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Data found in plan.Trial</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_trial_info</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># &#39;Active&#39; trial for this plan</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_points</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Data found in plan.Points</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_patient_setup</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Data found in PatientSetup file</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_primary_image</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Primary image for this plan</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_uid_prefix</span> <span class="o">=</span> <span class="n">UID_PREFIX</span>  <span class="c1"># The prefix for UIDs generated</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_roi_count</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Store the total number of ROIs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_iso_center</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># Store the iso center of this plan</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ct_center</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># Store the ct center of the primary image of this plan</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dose_ref_pt</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># Store the dose ref point of this plan</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_plan_inst_uid</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># UID for RTPlan instance</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dose_inst_uid</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># UID for RTDose instance</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_struct_inst_uid</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># UID for RTStruct instance</span>
+
+        <span class="k">for</span> <span class="n">image</span> <span class="ow">in</span> <span class="n">pinnacle</span><span class="o">.</span><span class="n">images</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">image</span><span class="o">.</span><span class="n">image</span><span class="p">[</span><span class="s2">&quot;ImageSetID&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">plan_info</span><span class="p">[</span><span class="s2">&quot;PrimaryCTImageSetID&quot;</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_primary_image</span> <span class="o">=</span> <span class="n">image</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_primary_image</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Primary Image Not Available&quot;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">logger</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Gets the configured logger.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        logger : Logger</span>
+<span class="sd">            Logger configured.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pinnacle</span><span class="o">.</span><span class="n">logger</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">pinnacle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Gets the PinnacleExport object.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        pinnacle : PinnacleExport</span>
+<span class="sd">            PinnacleExport object for this dataset.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pinnacle</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Gets the path of the Pinnacle data.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        path : str</span>
+<span class="sd">            Path containing the Pinnacle data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">primary_image</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Gets the primary image for this plan.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        primary_image : PinnacleImage</span>
+<span class="sd">            PinnacleImage representing the primary image for this plan.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_primary_image</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">machine_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Gets the machine info for this plan.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        machine_info : dict</span>
+<span class="sd">            Machine info read from &#39;plan.Pinnacle.Machines&#39; file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_machine_info</span><span class="p">:</span>
+            <span class="n">path_machine</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">,</span> <span class="s2">&quot;plan.Pinnacle.Machines&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Reading machine data from: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">path_machine</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_machine_info</span> <span class="o">=</span> <span class="n">pinn_to_dict</span><span class="p">(</span><span class="n">path_machine</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_machine_info</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">trials</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Gets the trials within this plan.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        trials : list</span>
+<span class="sd">            List of all trials found within this plan.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trials</span><span class="p">:</span>
+            <span class="n">path_trial</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">,</span> <span class="s2">&quot;plan.Trial&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Reading trial data from: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">path_trial</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_trials</span> <span class="o">=</span> <span class="n">pinn_to_dict</span><span class="p">(</span><span class="n">path_trial</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_trials</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_trials</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_trials</span><span class="p">[</span><span class="s2">&quot;Trial&quot;</span><span class="p">]]</span>
+
+            <span class="c1"># Select the first trial by default</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trial_info</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_trial_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trials</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Number of trials read: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_trials</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Active Trial: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trial_info</span><span class="p">[</span><span class="s2">&quot;Name&quot;</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trials</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">active_trial</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get and set the active trial for this plan.</span>
+
+<span class="sd">        When DICOM objects are exported, data from the active trial is</span>
+<span class="sd">        used to generate the output.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trial_info</span>
+
+    <span class="nd">@active_trial</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">active_trial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trial_name</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">trial_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">trial</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">trials</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">trial</span><span class="p">[</span><span class="s2">&quot;Name&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">trial_name</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_trial_info</span> <span class="o">=</span> <span class="n">trial</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Active Trial set: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">trial_name</span><span class="p">)</span>
+                    <span class="k">return</span>
+
+        <span class="k">raise</span> <span class="ne">KeyError</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">plan_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Gets the plan information for this plan.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        plan_info : dict</span>
+<span class="sd">            Plan info as found in the Pinnacle &#39;Patient&#39; file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_plan_info</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">trial_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Gets the trial information of the active trial.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        trial_info : dict</span>
+<span class="sd">            Trial info from the &#39;plan.Trial&#39; file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trial_info</span><span class="p">:</span>
+            <span class="c1"># Ensures that the trials are read and a default</span>
+            <span class="c1"># trial_info is set</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">trials</span>  <span class="c1"># pylint: disable=pointless-statement</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trial_info</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">points</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Gets the points defined within the plan.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        points : list</span>
+<span class="sd">            List of points read from the &#39;plan.Points&#39; file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_points</span><span class="p">:</span>
+            <span class="n">path_points</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">,</span> <span class="s2">&quot;plan.Points&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Reading points data from: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">path_points</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_points</span> <span class="o">=</span> <span class="n">pinn_to_dict</span><span class="p">(</span><span class="n">path_points</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_points</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_points</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_points</span><span class="p">[</span><span class="s2">&quot;Poi&quot;</span><span class="p">]]</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_points</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_points</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_points</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">patient_position</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Gets the patient position</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        patient_position : str</span>
+<span class="sd">            The patient position for this plan.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_patient_setup</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_patient_setup</span> <span class="o">=</span> <span class="n">pinn_to_dict</span><span class="p">(</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">,</span> <span class="s2">&quot;plan.PatientSetup&quot;</span><span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="n">pat_pos</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="s2">&quot;Head First&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_patient_setup</span><span class="p">[</span><span class="s2">&quot;Orientation&quot;</span><span class="p">]:</span>
+            <span class="n">pat_pos</span> <span class="o">=</span> <span class="s2">&quot;HF&quot;</span>
+        <span class="k">elif</span> <span class="s2">&quot;Feet First&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_patient_setup</span><span class="p">[</span><span class="s2">&quot;Orientation&quot;</span><span class="p">]:</span>
+            <span class="n">pat_pos</span> <span class="o">=</span> <span class="s2">&quot;FF&quot;</span>
+
+        <span class="k">if</span> <span class="s2">&quot;supine&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_patient_setup</span><span class="p">[</span><span class="s2">&quot;Position&quot;</span><span class="p">]:</span>
+            <span class="n">pat_pos</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">pat_pos</span><span class="si">}</span><span class="s2">S&quot;</span>
+        <span class="k">elif</span> <span class="s2">&quot;prone&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_patient_setup</span><span class="p">[</span><span class="s2">&quot;Position&quot;</span><span class="p">]:</span>
+            <span class="n">pat_pos</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">pat_pos</span><span class="si">}</span><span class="s2">P&quot;</span>
+        <span class="k">elif</span> <span class="p">(</span>
+            <span class="s2">&quot;decubitus right&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_patient_setup</span><span class="p">[</span><span class="s2">&quot;Position&quot;</span><span class="p">]</span>
+            <span class="ow">or</span> <span class="s2">&quot;Decuibitus Right&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_patient_setup</span><span class="p">[</span><span class="s2">&quot;Position&quot;</span><span class="p">]</span>
+        <span class="p">):</span>
+            <span class="n">pat_pos</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">pat_pos</span><span class="si">}</span><span class="s2">DR&quot;</span>
+        <span class="k">elif</span> <span class="p">(</span>
+            <span class="s2">&quot;decubitus left&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_patient_setup</span><span class="p">[</span><span class="s2">&quot;Position&quot;</span><span class="p">]</span>
+            <span class="ow">or</span> <span class="s2">&quot;Decuibitus Left&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_patient_setup</span><span class="p">[</span><span class="s2">&quot;Position&quot;</span><span class="p">]</span>
+        <span class="p">):</span>
+            <span class="n">pat_pos</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">pat_pos</span><span class="si">}</span><span class="s2">DL&quot;</span>
+
+        <span class="k">return</span> <span class="n">pat_pos</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">iso_center</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Gets and sets the iso center for this plan.&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_iso_center</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">find_iso_center</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iso_center</span>
+
+    <span class="nd">@iso_center</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">iso_center</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iso_center</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_iso_center</span> <span class="o">=</span> <span class="n">iso_center</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">is_prefix_valid</span><span class="p">(</span><span class="n">prefix</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if a UID prefix is valid.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">            prefix :  str</span>
+<span class="sd">                The UID prefix to check.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            True if valid, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">pydicom</span><span class="o">.</span><span class="n">uid</span><span class="o">.</span><span class="n">RE_VALID_UID_PREFIX</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">generate_uids</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid_type</span><span class="o">=</span><span class="s2">&quot;HASH&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generates UIDs to be used for exporting this plan.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">            uid_type : str, optional</span>
+<span class="sd">                If &#39;HASH&#39;, the entropy will be generated</span>
+<span class="sd">                to hash to consistant UIDs. If not then random UIDs will be</span>
+<span class="sd">                generated. Default: &#39;HASH&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">entropy_srcs</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">uid_type</span> <span class="o">==</span> <span class="s2">&quot;HASH&quot;</span><span class="p">:</span>
+            <span class="n">entropy_srcs</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">entropy_srcs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pinnacle</span><span class="o">.</span><span class="n">patient_info</span><span class="p">[</span><span class="s2">&quot;MedicalRecordNumber&quot;</span><span class="p">])</span>
+            <span class="n">entropy_srcs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plan_info</span><span class="p">[</span><span class="s2">&quot;PlanName&quot;</span><span class="p">])</span>
+            <span class="n">entropy_srcs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trial_info</span><span class="p">[</span><span class="s2">&quot;Name&quot;</span><span class="p">])</span>
+            <span class="n">entropy_srcs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trial_info</span><span class="p">[</span><span class="s2">&quot;ObjectVersion&quot;</span><span class="p">][</span><span class="s2">&quot;WriteTimeStamp&quot;</span><span class="p">])</span>
+
+        <span class="n">RTPLAN_prefix</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_uid_prefix</span><span class="si">}</span><span class="s2">1.&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_plan_inst_uid</span> <span class="o">=</span> <span class="n">pydicom</span><span class="o">.</span><span class="n">uid</span><span class="o">.</span><span class="n">generate_uid</span><span class="p">(</span>
+            <span class="n">prefix</span><span class="o">=</span><span class="n">RTPLAN_prefix</span><span class="p">,</span> <span class="n">entropy_srcs</span><span class="o">=</span><span class="n">entropy_srcs</span>
+        <span class="p">)</span>
+        <span class="n">RTDOSE_prefix</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_uid_prefix</span><span class="si">}</span><span class="s2">2.&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dose_inst_uid</span> <span class="o">=</span> <span class="n">pydicom</span><span class="o">.</span><span class="n">uid</span><span class="o">.</span><span class="n">generate_uid</span><span class="p">(</span>
+            <span class="n">prefix</span><span class="o">=</span><span class="n">RTDOSE_prefix</span><span class="p">,</span> <span class="n">entropy_srcs</span><span class="o">=</span><span class="n">entropy_srcs</span>
+        <span class="p">)</span>
+        <span class="n">RTSTRUCT_prefix</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_uid_prefix</span><span class="si">}</span><span class="s2">3.&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_struct_inst_uid</span> <span class="o">=</span> <span class="n">pydicom</span><span class="o">.</span><span class="n">uid</span><span class="o">.</span><span class="n">generate_uid</span><span class="p">(</span>
+            <span class="n">prefix</span><span class="o">=</span><span class="n">RTSTRUCT_prefix</span><span class="p">,</span> <span class="n">entropy_srcs</span><span class="o">=</span><span class="n">entropy_srcs</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Plan Instance UID: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_plan_inst_uid</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Dose Instance UID: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_dose_inst_uid</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Struct Instance UID: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_struct_inst_uid</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">plan_inst_uid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Gets the instance UID for RTPLAN.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        uid : str</span>
+<span class="sd">            The UID to use for the plan.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_plan_inst_uid</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">generate_uids</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_plan_inst_uid</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dose_inst_uid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Gets the instance UID for RTDOSE.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        uid : str</span>
+<span class="sd">            The UID to use for the dose.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dose_inst_uid</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">generate_uids</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dose_inst_uid</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">struct_inst_uid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Gets the instance UID for RTSTRUCT.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        uid : str</span>
+<span class="sd">            The UID to use for the struct.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_struct_inst_uid</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">generate_uids</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_struct_inst_uid</span>
+
+    <span class="c1"># Convert the point from the pinnacle plan format to dicom</span>
+    <span class="k">def</span> <span class="nf">convert_point</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">point</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert a point from Pinnacle coordinates to DICOM coordinates.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">            point : list</span>
+<span class="sd">                The point to convert.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            The converted point.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">image_header</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">primary_image</span><span class="o">.</span><span class="n">image_header</span>
+
+        <span class="n">refpoint</span> <span class="o">=</span> <span class="p">[</span><span class="n">point</span><span class="p">[</span><span class="s2">&quot;XCoord&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">10</span><span class="p">,</span> <span class="n">point</span><span class="p">[</span><span class="s2">&quot;YCoord&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">10</span><span class="p">,</span> <span class="n">point</span><span class="p">[</span><span class="s2">&quot;ZCoord&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">10</span><span class="p">]</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">image_header</span><span class="p">[</span><span class="s2">&quot;patient_position&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;HFP&quot;</span>
+            <span class="ow">or</span> <span class="n">image_header</span><span class="p">[</span><span class="s2">&quot;patient_position&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;FFS&quot;</span>
+        <span class="p">):</span>
+            <span class="n">refpoint</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">refpoint</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">image_header</span><span class="p">[</span><span class="s2">&quot;patient_position&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;HFS&quot;</span>
+            <span class="ow">or</span> <span class="n">image_header</span><span class="p">[</span><span class="s2">&quot;patient_position&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;FFS&quot;</span>
+        <span class="p">):</span>
+            <span class="n">refpoint</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="n">refpoint</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">image_header</span><span class="p">[</span><span class="s2">&quot;patient_position&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;HFS&quot;</span>
+            <span class="ow">or</span> <span class="n">image_header</span><span class="p">[</span><span class="s2">&quot;patient_position&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;HFP&quot;</span>
+        <span class="p">):</span>
+            <span class="n">refpoint</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="n">refpoint</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+
+        <span class="n">point</span><span class="p">[</span><span class="s2">&quot;refpoint&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">refpoint</span>
+
+        <span class="n">refpoint</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">refpoint</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">5</span><span class="p">)</span>
+        <span class="n">refpoint</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">refpoint</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">5</span><span class="p">)</span>
+        <span class="n">refpoint</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">refpoint</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="mi">5</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">refpoint</span></div>
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By the PyMedPhys community
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2018-2021.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
