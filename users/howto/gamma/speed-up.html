@@ -206,10 +206,6 @@
 <li class="toctree-l3"><a class="reference internal" href="from-dicom.html">Gamma from DICOM</a></li>
 </ul>
 </details></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../interp/index.html">Interpolation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="../interp/implementation_comparison.html">Multilinear Interpolation Comparison</a></li>
-</ul>
-</details></li>
 <li class="toctree-l2"><a class="reference internal" href="../add-a-linac.html">Adding a Linac</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../tunnels/index.html">Tunnels</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="../tunnels/samba.html">SAMBA SSH Tunnelling</a></li>
@@ -665,7 +661,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../../_images/66934f41f4c318c68043fcb404347aaa426e4abc1227b0735377195e0d4b7828.png" src="../../../_images/66934f41f4c318c68043fcb404347aaa426e4abc1227b0735377195e0d4b7828.png" />
+<img alt="../../../_images/cc196955fac7dddff578209bd8ac2acc6118f1b835b17492162d9feea62f3f0f.png" src="../../../_images/cc196955fac7dddff578209bd8ac2acc6118f1b835b17492162d9feea62f3f0f.png" />
 </div>
 </div>
 <p>As you can see, the largest dose differences are concentrated in small regions of the slices, which will end up in a fast gamma evaluation, as the computation will be immediate for those points where the dose difference is zero.</p>
@@ -771,8 +767,8 @@ Dose threshold: 0.0195 Gy
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>INFO:root:Complete!
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 1.66 s, sys: 246 ms, total: 1.9 s
-Wall time: 1.05 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 1.44 s, sys: 290 ms, total: 1.73 s
+Wall time: 1.39 s
 </pre></div>
 </div>
 </div>
@@ -824,7 +820,7 @@ Wall time: 1.05 s
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../../_images/10a63fc302e45345821c939570ca06af340e3f4d3f945c503017b048c62cbfe4.png" src="../../../_images/10a63fc302e45345821c939570ca06af340e3f4d3f945c503017b048c62cbfe4.png" />
+<img alt="../../../_images/fca81690c251103db9de8440652330fc05c54b6e32603834e32d651e7e92525d.png" src="../../../_images/fca81690c251103db9de8440652330fc05c54b6e32603834e32d651e7e92525d.png" />
 </div>
 </div>
 <p>Once the gamma index distribution has been computed, one can consider the gamma pass rate, defined as the fraction of points having $\gamma\le 1$, to assess the agreement between the reference and evaluated dose distributions.</p>
@@ -909,8 +905,8 @@ Wall time: 1.05 s
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 808 ms, sys: 2.55 ms, total: 811 ms
-Wall time: 211 ms
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 501 ms, sys: 48.3 ms, total: 550 ms
+Wall time: 549 ms
 </pre></div>
 </div>
 </div>
@@ -927,7 +923,7 @@ Wall time: 211 ms
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../../_images/9fa3ca8e75db45d02f6e933ce9d99c6afa7b036325f7757aa08b579b06f889ef.png" src="../../../_images/9fa3ca8e75db45d02f6e933ce9d99c6afa7b036325f7757aa08b579b06f889ef.png" />
+<img alt="../../../_images/551cfe817d440160bc94031bef89b6e20a47fe13edc2b35e20ae07e2170176a5.png" src="../../../_images/551cfe817d440160bc94031bef89b6e20a47fe13edc2b35e20ae07e2170176a5.png" />
 </div>
 </div>
 <p>If we want to evaluate the gamma pass rate, we are uninterested in accurate gamma index values for $\gamma &gt; 1$.</p>
@@ -947,8 +943,8 @@ Wall time: 211 ms
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 505 ms, sys: 0 ns, total: 505 ms
-Wall time: 128 ms
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 319 ms, sys: 0 ns, total: 319 ms
+Wall time: 319 ms
 </pre></div>
 </div>
 </div>
@@ -965,7 +961,7 @@ Wall time: 128 ms
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../../_images/cec98ce9dd33a99a7feba4278d0dbf6f03a4206a78a32060227e26f5a7c590ef.png" src="../../../_images/cec98ce9dd33a99a7feba4278d0dbf6f03a4206a78a32060227e26f5a7c590ef.png" />
+<img alt="../../../_images/650311aee29e595c87c66e7209c843dcf2e9ea1dcb0946b90d05e77da3b561a3.png" src="../../../_images/650311aee29e595c87c66e7209c843dcf2e9ea1dcb0946b90d05e77da3b561a3.png" />
 </div>
 </div>
 <p>Notice how the gamma passing rate value (shown in the plot title) did not change. Of course now all the points with $\gamma &gt; 1.1$ are collapsed to the 1.1 bin.</p>
@@ -986,8 +982,8 @@ Wall time: 128 ms
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 444 ms, sys: 0 ns, total: 444 ms
-Wall time: 115 ms
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 320 ms, sys: 4.01 ms, total: 324 ms
+Wall time: 323 ms
 </pre></div>
 </div>
 </div>
@@ -1005,7 +1001,7 @@ Wall time: 115 ms
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../../_images/bc8da9b758c7e1aca6e9e227ed243588037295e0bb2fa3c1a1814d2f3fb01c73.png" src="../../../_images/bc8da9b758c7e1aca6e9e227ed243588037295e0bb2fa3c1a1814d2f3fb01c73.png" />
+<img alt="../../../_images/96ea0d5060c82fe6c7d664312bc578e4b824a79f9d9843246d48eb1eb6a99912.png" src="../../../_images/96ea0d5060c82fe6c7d664312bc578e4b824a79f9d9843246d48eb1eb6a99912.png" />
 </div>
 </div>
 <p>As you can see, the computation time decreased and, despite the the PyMedPhys <a class="reference external" href="https://docs.pymedphys.com/users/ref/lib/gamma.html">gamma</a> function sampled one 10th of the points, the pass rate deviates by less than 1% from the true value. Therefore, you can use <code>random_subset</code> to get a sense of what could be the pass rate of the dose distributions you are assessing.</p>

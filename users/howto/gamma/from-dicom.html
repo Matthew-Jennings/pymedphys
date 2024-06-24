@@ -77,7 +77,7 @@
     <link rel="icon" href="../../../_static/pymedphys.svg"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="Interpolation" href="../interp/index.html" />
+    <link rel="next" title="Adding a Linac" href="../add-a-linac.html" />
     <link rel="prev" title="The Effects of Noise on Gamma" href="effect-of-noise.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -204,10 +204,6 @@
 <li class="toctree-l3"><a class="reference internal" href="1D-from-csv.html">Gamma from 1D ASCII data</a></li>
 <li class="toctree-l3"><a class="reference internal" href="effect-of-noise.html">The Effects of Noise on Gamma</a></li>
 <li class="toctree-l3 current active"><a class="current reference internal" href="#">Gamma from DICOM</a></li>
-</ul>
-</details></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../interp/index.html">Interpolation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="../interp/implementation_comparison.html">Multilinear Interpolation Comparison</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../add-a-linac.html">Adding a Linac</a></li>
@@ -591,9 +587,7 @@ document.write(`
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: pydicom in /home/runner/work/pymedphys/pymedphys/.venv/lib/python3.12/site-packages (2.4.4)
 Requirement already satisfied: pymedphys in /home/runner/work/pymedphys/pymedphys/.venv/lib/python3.12/site-packages (0.41.0.dev0)
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: setuptools in /home/runner/work/pymedphys/pymedphys/.venv/lib/python3.12/site-packages (from pymedphys) (70.1.0)
+Requirement already satisfied: setuptools in /home/runner/work/pymedphys/pymedphys/.venv/lib/python3.12/site-packages (from pymedphys) (70.1.0)
 Requirement already satisfied: tomlkit in /home/runner/work/pymedphys/pymedphys/.venv/lib/python3.12/site-packages (from pymedphys) (0.12.5)
 Requirement already satisfied: typing-extensions in /home/runner/work/pymedphys/pymedphys/.venv/lib/python3.12/site-packages (from pymedphys) (4.12.2)
 </pre></div>
@@ -752,7 +746,7 @@ Requirement already satisfied: typing-extensions in /home/runner/work/pymedphys/
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 1.0, &#39;Dose cut: 20% | Local gamma (1%/1mm) | Pass Rate(γ&lt;=1): 100.00% \n ref pts: 6100064 | valid γ pts: 106910&#39;)
 </pre></div>
 </div>
-<img alt="../../../_images/7d673486141b82ec678ba4a2d0ddc88f11f26c6f392cbf8fa293cad3c550f272.png" src="../../../_images/7d673486141b82ec678ba4a2d0ddc88f11f26c6f392cbf8fa293cad3c550f272.png" />
+<img alt="../../../_images/d514e8b423c648a2aa66ed573f1701dbb2d9dbab9a6d7566056289d4d917e086.png" src="../../../_images/d514e8b423c648a2aa66ed573f1701dbb2d9dbab9a6d7566056289d4d917e086.png" />
 </div>
 </div>
 </section>
@@ -854,31 +848,31 @@ Requirement already satisfied: typing-extensions in /home/runner/work/pymedphys/
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../../_images/e40c9e19a4c01776203ec3ba251b3ab996bf70f5a355028cda7f90ebee7180be.png" src="../../../_images/e40c9e19a4c01776203ec3ba251b3ab996bf70f5a355028cda7f90ebee7180be.png" />
+<img alt="../../../_images/71db2ff0d23ef96f41046bc43762945d21535a81f00d148268a9ccf6593ebf59.png" src="../../../_images/71db2ff0d23ef96f41046bc43762945d21535a81f00d148268a9ccf6593ebf59.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>
 </pre></div>
 </div>
-<img alt="../../../_images/ad3240a470d0a397063b235f0c1d0f21ce1e12340f189c70bf7019b9b48854f8.png" src="../../../_images/ad3240a470d0a397063b235f0c1d0f21ce1e12340f189c70bf7019b9b48854f8.png" />
+<img alt="../../../_images/20f52531dbf93d51b5961f8a2c9fae5f38d9c266988d77089102d719be7f9511.png" src="../../../_images/20f52531dbf93d51b5961f8a2c9fae5f38d9c266988d77089102d719be7f9511.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>
 </pre></div>
 </div>
-<img alt="../../../_images/a2dcf52b407ac10976dd2755747c479dcc4ebc8cda8c136ab5c73d6340a60cea.png" src="../../../_images/a2dcf52b407ac10976dd2755747c479dcc4ebc8cda8c136ab5c73d6340a60cea.png" />
+<img alt="../../../_images/49ac32c5c8c076ccf95e6f726573458ba512eb73b7565153ad4a5ce0d8c32854.png" src="../../../_images/49ac32c5c8c076ccf95e6f726573458ba512eb73b7565153ad4a5ce0d8c32854.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>
 </pre></div>
 </div>
-<img alt="../../../_images/206b8d35f60a249f35fce41734a8dd7e4a3e8a30f98bc7702ee16942b3987cb1.png" src="../../../_images/206b8d35f60a249f35fce41734a8dd7e4a3e8a30f98bc7702ee16942b3987cb1.png" />
+<img alt="../../../_images/9416291d3617dadbd040896aa5fc706e6a3271c94ba7061fececfe4b985ec847.png" src="../../../_images/9416291d3617dadbd040896aa5fc706e6a3271c94ba7061fececfe4b985ec847.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>
 </pre></div>
 </div>
-<img alt="../../../_images/08bd13ecc7ad26671871e26158107c9b47a0988d81af2666996d47ac2c5f1b91.png" src="../../../_images/08bd13ecc7ad26671871e26158107c9b47a0988d81af2666996d47ac2c5f1b91.png" />
+<img alt="../../../_images/cd1eb0e3f7f68ecde72606cdc2785e86a056eba0d49a01302aa7cd9521d19d50.png" src="../../../_images/cd1eb0e3f7f68ecde72606cdc2785e86a056eba0d49a01302aa7cd9521d19d50.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>
 </pre></div>
 </div>
-<img alt="../../../_images/80c29cda3c1bb12c0d728b644e34da519ad4385d7e015b557914d06217f08f01.png" src="../../../_images/80c29cda3c1bb12c0d728b644e34da519ad4385d7e015b557914d06217f08f01.png" />
+<img alt="../../../_images/1ed7864773fe0d2dbe9271befadc6c94de2daf9a0eb62790806569e567bdb90b.png" src="../../../_images/1ed7864773fe0d2dbe9271befadc6c94de2daf9a0eb62790806569e567bdb90b.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>
 </pre></div>
 </div>
-<img alt="../../../_images/0f4f991a37c944a0ee8578708d3b037b77754e2e97c7c6f7c936af670295590d.png" src="../../../_images/0f4f991a37c944a0ee8578708d3b037b77754e2e97c7c6f7c936af670295590d.png" />
+<img alt="../../../_images/f442b4adf137e03bff9bbb9f0ab16d591fab490f9c55f738981d67e3f75c7413.png" src="../../../_images/f442b4adf137e03bff9bbb9f0ab16d591fab490f9c55f738981d67e3f75c7413.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>
 </pre></div>
 </div>
@@ -927,11 +921,11 @@ Requirement already satisfied: typing-extensions in /home/runner/work/pymedphys/
       </div>
     </a>
     <a class="right-next"
-       href="../interp/index.html"
+       href="../add-a-linac.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Interpolation</p>
+        <p class="prev-next-title">Adding a Linac</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
