@@ -206,6 +206,10 @@
 <li class="toctree-l3"><a class="reference internal" href="from-dicom.html">Gamma from DICOM</a></li>
 </ul>
 </details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../interp/index.html">Interpolation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../interp/implementation_comparison.html">Multilinear Interpolation Comparison</a></li>
+</ul>
+</details></li>
 <li class="toctree-l2"><a class="reference internal" href="../add-a-linac.html">Adding a Linac</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../tunnels/index.html">Tunnels</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="../tunnels/samba.html">SAMBA SSH Tunnelling</a></li>
@@ -566,15 +570,10 @@ document.write(`
                   
   <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">copy</span>
-<span class="kn">import</span> <span class="nn">sys</span>
-
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">default_rng</span>
-<span class="kn">import</span> <span class="nn">pydicom</span>
 
 <span class="kn">import</span> <span class="nn">pymedphys</span>
-<span class="kn">from</span> <span class="nn">pymedphys._dicom</span> <span class="kn">import</span> <span class="n">create</span>
 </pre></div>
 </div>
 </div>
@@ -583,20 +582,20 @@ document.write(`
 <h1>Create two 100 × 100 × 100 dose grids with corresponding axes:<a class="headerlink" href="#create-two-100-100-100-dose-grids-with-corresponding-axes" title="Link to this heading">#</a></h1>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">WIDTH</span><span class="o">=</span><span class="mi">100</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">WIDTH</span> <span class="o">=</span> <span class="mi">200</span>
 
 <span class="n">DOSE_GRID_SHAPE</span> <span class="o">=</span> <span class="p">(</span><span class="n">WIDTH</span><span class="p">,</span> <span class="n">WIDTH</span><span class="p">,</span> <span class="n">WIDTH</span><span class="p">)</span>
 
 <span class="n">axes_ref</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="n">DOSE_GRID_SHAPE</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">DOSE_GRID_SHAPE</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">2</span><span class="p">),</span>
-    <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="n">DOSE_GRID_SHAPE</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">DOSE_GRID_SHAPE</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">2</span><span class="p">),</span>
-    <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="n">DOSE_GRID_SHAPE</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">DOSE_GRID_SHAPE</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">2</span><span class="p">),</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="n">DOSE_GRID_SHAPE</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">DOSE_GRID_SHAPE</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">2</span><span class="p">),</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="n">DOSE_GRID_SHAPE</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">DOSE_GRID_SHAPE</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">2</span><span class="p">),</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="n">DOSE_GRID_SHAPE</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">DOSE_GRID_SHAPE</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">2</span><span class="p">),</span>
 <span class="p">)</span>
 <span class="n">axes_eval</span> <span class="o">=</span> <span class="n">axes_ref</span>
 
 <span class="n">rng</span> <span class="o">=</span> <span class="n">default_rng</span><span class="p">()</span>
 
-<span class="n">dose_ref</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">0.04</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">DOSE_GRID_SHAPE</span><span class="p">)</span> <span class="c1"># 2% RSU</span>
+<span class="n">dose_ref</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">0.04</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">DOSE_GRID_SHAPE</span><span class="p">)</span>  <span class="c1"># 2% RSU</span>
 <span class="n">dose_eval</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">0.04</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">DOSE_GRID_SHAPE</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -616,20 +615,96 @@ document.write(`
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
-
 <span class="n">gamma</span> <span class="o">=</span> <span class="n">pymedphys</span><span class="o">.</span><span class="n">gamma</span><span class="p">(</span>
-    <span class="n">axes_ref</span><span class="p">,</span> <span class="n">dose_ref</span><span class="p">,</span> 
-    <span class="n">axes_eval</span><span class="p">,</span> <span class="n">dose_eval</span><span class="p">,</span> 
-    <span class="n">dose_percent_thresh</span><span class="p">,</span> <span class="n">dist_mm_thresh</span><span class="p">,</span> <span class="n">interpolator</span><span class="o">=</span><span class="s2">&quot;scipy&quot;</span><span class="p">)</span>
+    <span class="n">axes_ref</span><span class="p">,</span>
+    <span class="n">dose_ref</span><span class="p">,</span>
+    <span class="n">axes_eval</span><span class="p">,</span>
+    <span class="n">dose_eval</span><span class="p">,</span>
+    <span class="n">dose_percent_thresh</span><span class="p">,</span>
+    <span class="n">dist_mm_thresh</span><span class="p">,</span>
+    <span class="n">interp_fraction</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">interp_algo</span><span class="o">=</span><span class="s2">&quot;pymedphys&quot;</span><span class="p">,</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
 <div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">TypeError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="ne">KeyboardInterrupt</span><span class="g g-Whitespace">                         </span>Traceback (most recent call last)
 <span class="n">File</span> <span class="o">&lt;</span><span class="n">timed</span> <span class="n">exec</span><span class="o">&gt;</span><span class="p">:</span><span class="mi">1</span>
 
-<span class="ne">TypeError</span>: gamma_shell() got an unexpected keyword argument &#39;interpolator&#39;
+<span class="nn">File ~/work/pymedphys/pymedphys/lib/pymedphys/_gamma/implementation/shell.py:164,</span> in <span class="ni">gamma_shell</span><span class="nt">(axes_reference, dose_reference, axes_evaluation, dose_evaluation, dose_percent_threshold, distance_mm_threshold, lower_percent_dose_cutoff, interp_fraction, max_gamma, local_gamma, global_normalisation, skip_once_passed, random_subset, ram_available, quiet, interp_algo)</span>
+<span class="g g-Whitespace">    </span><span class="mi">157</span> <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Distance threshold set to </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">options</span><span class="o">.</span><span class="n">distance_mm_threshold</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">158</span> <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">159</span>     <span class="s2">&quot;Lower dose cutoff set to </span><span class="si">%.3f</span><span class="s2"> (</span><span class="si">%.1f%%</span><span class="s2"> of normalisation)&quot;</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">160</span>     <span class="n">options</span><span class="o">.</span><span class="n">lower_dose_cutoff</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">161</span>     <span class="n">lower_percent_dose_cutoff</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">162</span> <span class="p">)</span>
+<span class="ne">--&gt; </span><span class="mi">164</span> <span class="n">current_gamma</span> <span class="o">=</span> <span class="n">gamma_loop</span><span class="p">(</span><span class="n">options</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">166</span> <span class="n">gamma</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="g g-Whitespace">    </span><span class="mi">167</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">dose_threshold</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">dose_percent_threshold</span><span class="p">):</span>
+
+<span class="nn">File ~/work/pymedphys/pymedphys/lib/pymedphys/_gamma/implementation/shell.py:349,</span> in <span class="ni">gamma_loop</span><span class="nt">(options)</span>
+<span class="g g-Whitespace">    </span><span class="mi">342</span> <span class="k">while</span> <span class="n">distance</span> <span class="o">&lt;=</span> <span class="n">options</span><span class="o">.</span><span class="n">maximum_test_distance</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">343</span>     <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">344</span>         <span class="s2">&quot;Current distance: </span><span class="si">%.2f</span><span class="s2"> mm | &quot;</span> <span class="s2">&quot;Number of reference points remaining: </span><span class="si">%i</span><span class="s2">&quot;</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">345</span>         <span class="n">distance</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">346</span>         <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">to_be_checked</span><span class="p">),</span>
+<span class="g g-Whitespace">    </span><span class="mi">347</span>     <span class="p">)</span>
+<span class="ne">--&gt; </span><span class="mi">349</span>     <span class="n">min_relative_dose_difference</span> <span class="o">=</span> <span class="n">calculate_min_dose_difference</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">350</span>         <span class="n">options</span><span class="p">,</span> <span class="n">distance</span><span class="p">,</span> <span class="n">to_be_checked</span><span class="p">,</span> <span class="n">distance_step_size</span>
+<span class="g g-Whitespace">    </span><span class="mi">351</span>     <span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">353</span>     <span class="n">current_gamma</span><span class="p">,</span> <span class="n">still_searching_for_gamma_all</span> <span class="o">=</span> <span class="n">multi_thresholds_gamma_calc</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">354</span>         <span class="n">options</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">355</span>         <span class="n">current_gamma</span><span class="p">,</span>
+   <span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">358</span>         <span class="n">to_be_checked</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">359</span>     <span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">361</span>     <span class="n">still_searching_for_gamma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">362</span>         <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">still_searching_for_gamma_all</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">),</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span>
+<span class="g g-Whitespace">    </span><span class="mi">363</span>     <span class="p">)</span>
+
+<span class="nn">File ~/work/pymedphys/pymedphys/lib/pymedphys/_gamma/implementation/shell.py:487,</span> in <span class="ni">calculate_min_dose_difference</span><span class="nt">(options, distance, to_be_checked, distance_step_size)</span>
+<span class="g g-Whitespace">    </span><span class="mi">481</span> <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">to_be_checked</span><span class="p">[</span><span class="n">to_be_checked_sliced</span><span class="p">])</span>
+<span class="g g-Whitespace">    </span><span class="mi">483</span> <span class="n">axes_reference_to_be_checked</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">flat_mesh_axes_reference</span><span class="p">[</span>
+<span class="g g-Whitespace">    </span><span class="mi">484</span>     <span class="p">:,</span> <span class="n">to_be_checked_sliced</span>
+<span class="g g-Whitespace">    </span><span class="mi">485</span> <span class="p">]</span>
+<span class="ne">--&gt; </span><span class="mi">487</span> <span class="n">evaluation_dose</span> <span class="o">=</span> <span class="n">interpolate_evaluation_dose_at_distance</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">488</span>     <span class="n">options</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">489</span>     <span class="n">axes_reference_to_be_checked</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">490</span>     <span class="n">coordinates_at_distance_shell</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">491</span> <span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">493</span> <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">local_gamma</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">494</span>     <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="n">divide</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">):</span>
+
+<span class="nn">File ~/work/pymedphys/pymedphys/lib/pymedphys/_gamma/implementation/shell.py:525,</span> in <span class="ni">interpolate_evaluation_dose_at_distance</span><span class="nt">(options, axes_reference_to_be_checked, coordinates_at_distance_shell)</span>
+<span class="g g-Whitespace">    </span><span class="mi">520</span> <span class="n">all_points</span> <span class="o">=</span> <span class="n">add_shells_to_ref_coords</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">521</span>     <span class="n">axes_reference_to_be_checked</span><span class="p">,</span> <span class="n">coordinates_at_distance_shell</span>
+<span class="g g-Whitespace">    </span><span class="mi">522</span> <span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">524</span> <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">interp_algo</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;pymedphys&quot;</span><span class="p">:</span>
+<span class="ne">--&gt; </span><span class="mi">525</span>     <span class="n">evaluation_dose</span> <span class="o">=</span> <span class="n">_run_custom_interp</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">all_points</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">527</span> <span class="k">elif</span> <span class="n">options</span><span class="o">.</span><span class="n">interp_algo</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;scipy&quot;</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">528</span>     <span class="n">evaluation_dose</span> <span class="o">=</span> <span class="n">_run_interp_with_scipy</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">all_points</span><span class="p">)</span>
+
+<span class="nn">File ~/work/pymedphys/pymedphys/lib/pymedphys/_gamma/implementation/shell.py:546,</span> in <span class="ni">_run_custom_interp</span><span class="nt">(options, all_points)</span>
+<span class="g g-Whitespace">    </span><span class="mi">543</span> <span class="k">def</span> <span class="nf">_run_custom_interp</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">all_points</span><span class="p">):</span>
+<span class="g g-Whitespace">    </span><span class="mi">544</span>     <span class="kn">from</span> <span class="nn">pymedphys._interp</span> <span class="kn">import</span> <span class="n">interp</span>
+<span class="ne">--&gt; </span><span class="mi">546</span>     <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">547</span>         <span class="p">[</span><span class="n">all_points</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">all_points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])]</span>
+<span class="g g-Whitespace">    </span><span class="mi">548</span>     <span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">550</span>     <span class="k">return</span> <span class="n">interp</span><span class="o">.</span><span class="n">multilinear_interp</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">551</span>         <span class="n">axes_known</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">axes_evaluation</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">552</span>         <span class="n">values</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">dose_evaluation</span><span class="p">),</span>
+   <span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">555</span>         <span class="n">extrap_fill_value</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">556</span>     <span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">all_points</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+<span class="nn">File ~/work/pymedphys/pymedphys/.venv/lib/python3.12/site-packages/numpy/lib/shape_base.py:652,</span> in <span class="ni">column_stack</span><span class="nt">(tup)</span>
+<span class="g g-Whitespace">    </span><span class="mi">650</span>         <span class="n">arr</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">subok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ndmin</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+<span class="g g-Whitespace">    </span><span class="mi">651</span>     <span class="n">arrays</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+<span class="ne">--&gt; </span><span class="mi">652</span> <span class="k">return</span> <span class="n">_nx</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">arrays</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="ne">KeyboardInterrupt</span>: 
 </pre></div>
 </div>
 </div>
@@ -639,18 +714,32 @@ document.write(`
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
 
 <span class="n">gamma</span> <span class="o">=</span> <span class="n">pymedphys</span><span class="o">.</span><span class="n">gamma</span><span class="p">(</span>
-    <span class="n">axes_ref</span><span class="p">,</span> <span class="n">dose_ref</span><span class="p">,</span> 
-    <span class="n">axes_eval</span><span class="p">,</span> <span class="n">dose_eval</span><span class="p">,</span> 
-    <span class="n">dose_percent_thresh</span><span class="p">,</span> <span class="n">dist_mm_thresh</span><span class="p">,</span> <span class="n">interpolator</span><span class="o">=</span><span class="s2">&quot;econforge&quot;</span><span class="p">)</span>
+    <span class="n">axes_ref</span><span class="p">,</span>
+    <span class="n">dose_ref</span><span class="p">,</span>
+    <span class="n">axes_eval</span><span class="p">,</span>
+    <span class="n">dose_eval</span><span class="p">,</span>
+    <span class="n">dose_percent_thresh</span><span class="p">,</span>
+    <span class="n">dist_mm_thresh</span><span class="p">,</span>
+    <span class="n">interp_fraction</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">interp_algo</span><span class="o">=</span><span class="s2">&quot;econforge&quot;</span><span class="p">,</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">TypeError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
-<span class="n">File</span> <span class="o">&lt;</span><span class="n">timed</span> <span class="n">exec</span><span class="o">&gt;</span><span class="p">:</span><span class="mi">1</span>
-
-<span class="ne">TypeError</span>: gamma_shell() got an unexpected keyword argument &#39;interpolator&#39;
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
+<span class="n">gamma</span> <span class="o">=</span> <span class="n">pymedphys</span><span class="o">.</span><span class="n">gamma</span><span class="p">(</span>
+    <span class="n">axes_ref</span><span class="p">,</span>
+    <span class="n">dose_ref</span><span class="p">,</span>
+    <span class="n">axes_eval</span><span class="p">,</span>
+    <span class="n">dose_eval</span><span class="p">,</span>
+    <span class="n">dose_percent_thresh</span><span class="p">,</span>
+    <span class="n">dist_mm_thresh</span><span class="p">,</span>
+    <span class="n">interp_fraction</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">interp_algo</span><span class="o">=</span><span class="s2">&quot;scipy&quot;</span><span class="p">,</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </div>

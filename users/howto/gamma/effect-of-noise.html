@@ -206,6 +206,10 @@
 <li class="toctree-l3"><a class="reference internal" href="from-dicom.html">Gamma from DICOM</a></li>
 </ul>
 </details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../interp/index.html">Interpolation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../interp/implementation_comparison.html">Multilinear Interpolation Comparison</a></li>
+</ul>
+</details></li>
 <li class="toctree-l2"><a class="reference internal" href="../add-a-linac.html">Adding a Linac</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../tunnels/index.html">Tunnels</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="../tunnels/samba.html">SAMBA SSH Tunnelling</a></li>
@@ -591,9 +595,7 @@ For a Monte Carlo planning system this dose distribution includes statistical no
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: pymedphys in /home/runner/work/pymedphys/pymedphys/.venv/lib/python3.12/site-packages (0.41.0.dev0)
 Requirement already satisfied: setuptools in /home/runner/work/pymedphys/pymedphys/.venv/lib/python3.12/site-packages (from pymedphys) (70.1.0)
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: tomlkit in /home/runner/work/pymedphys/pymedphys/.venv/lib/python3.12/site-packages (from pymedphys) (0.12.5)
+Requirement already satisfied: tomlkit in /home/runner/work/pymedphys/pymedphys/.venv/lib/python3.12/site-packages (from pymedphys) (0.12.5)
 Requirement already satisfied: typing-extensions in /home/runner/work/pymedphys/pymedphys/.venv/lib/python3.12/site-packages (from pymedphys) (4.12.2)
 </pre></div>
 </div>
@@ -660,7 +662,7 @@ Requirement already satisfied: typing-extensions in /home/runner/work/pymedphys/
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../../_images/f5cac3647a93114265fa020e9a6dac768f84345e20b2e5952b17e72b60963c65.png" src="../../../_images/f5cac3647a93114265fa020e9a6dac768f84345e20b2e5952b17e72b60963c65.png" />
+<img alt="../../../_images/6f698b7d3fe17591702240264decce8016219ca7769c9eeb4c113aa8bb3e78dc.png" src="../../../_images/6f698b7d3fe17591702240264decce8016219ca7769c9eeb4c113aa8bb3e78dc.png" />
 </div>
 </div>
 <p>Of importance the length of the first coordinate set in <code class="docutils literal notranslate"><span class="pre">coords</span></code> matches the first dimension of <code class="docutils literal notranslate"><span class="pre">dose_ref</span></code>, and the length of the second coordinate set in <code class="docutils literal notranslate"><span class="pre">coords</span></code> matches the second dimension of <code class="docutils literal notranslate"><span class="pre">dose_ref</span></code>. This is required because <code class="docutils literal notranslate"><span class="pre">pymedphys.gamma</span></code> internally uses <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.RegularGridInterpolator.html"><code class="docutils literal notranslate"><span class="pre">scipy.interpolate.RegularGridInterpolator</span></code></a> and the gamma implimentation has been chosen to align with this scipy coordinate convention uses here.</p>
@@ -727,7 +729,7 @@ Requirement already satisfied: typing-extensions in /home/runner/work/pymedphys/
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../../_images/b3a05d4fe8bd8a251f89079001e3a6b544d7dee75dbb2f762fd15c5dc9deb373.png" src="../../../_images/b3a05d4fe8bd8a251f89079001e3a6b544d7dee75dbb2f762fd15c5dc9deb373.png" />
+<img alt="../../../_images/3bb03fc9b072b1cdc6211d2fe41e14888513e9787f3d70b70da091b430ab545e.png" src="../../../_images/3bb03fc9b072b1cdc6211d2fe41e14888513e9787f3d70b70da091b430ab545e.png" />
 </div>
 </div>
 </section>
@@ -750,7 +752,7 @@ Requirement already satisfied: typing-extensions in /home/runner/work/pymedphys/
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../../_images/75b678f6d1dd891a565a3e2381f83030199dd88d23ba54e09e384a85c3de52f4.png" src="../../../_images/75b678f6d1dd891a565a3e2381f83030199dd88d23ba54e09e384a85c3de52f4.png" />
+<img alt="../../../_images/7cbf9dba5b7d84e009a6ba51fb6eeb63e17cdeb278471dc12ada5152caaf90b2.png" src="../../../_images/7cbf9dba5b7d84e009a6ba51fb6eeb63e17cdeb278471dc12ada5152caaf90b2.png" />
 </div>
 </div>
 </section>
@@ -786,12 +788,12 @@ Requirement already satisfied: typing-extensions in /home/runner/work/pymedphys/
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/tmp/ipykernel_1940/3121033137.py:1: DeprecationWarning: Parameter `quiet` will be deprecated in the future
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/tmp/ipykernel_1945/3121033137.py:1: DeprecationWarning: Parameter `quiet` will be deprecated in the future
   gamma_no_noise = pymedphys.gamma(
 </pre></div>
 </div>
-<img alt="../../../_images/ce9882b3e1520abe5bc924a3c451818431e848417e972d559a74eeb9dcc2d295.png" src="../../../_images/ce9882b3e1520abe5bc924a3c451818431e848417e972d559a74eeb9dcc2d295.png" />
-<img alt="../../../_images/7f791dce298b080215be26d1e953af99887313fa5d3d1a2f542b67250e3336d4.png" src="../../../_images/7f791dce298b080215be26d1e953af99887313fa5d3d1a2f542b67250e3336d4.png" />
+<img alt="../../../_images/455d452a88e01ad65f9a6ecbbb27df3b3929b88cdbb91f5cc9dae2a1cd071a77.png" src="../../../_images/455d452a88e01ad65f9a6ecbbb27df3b3929b88cdbb91f5cc9dae2a1cd071a77.png" />
+<img alt="../../../_images/74d3ed480d1f6841f51dcdefe6cab15c8470587285c94af935bb2b2603040379.png" src="../../../_images/74d3ed480d1f6841f51dcdefe6cab15c8470587285c94af935bb2b2603040379.png" />
 </div>
 </div>
 </section>
@@ -816,7 +818,7 @@ Requirement already satisfied: typing-extensions in /home/runner/work/pymedphys/
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../../_images/245cebeb30fe7204572a51125698121a0c8939d04c01f915df6e32f05935466f.png" src="../../../_images/245cebeb30fe7204572a51125698121a0c8939d04c01f915df6e32f05935466f.png" />
+<img alt="../../../_images/956dfd776681f2fb5ed6d1018c9324b3c90a2cfc0e09dbdbad81d07a1d0ba6c3.png" src="../../../_images/956dfd776681f2fb5ed6d1018c9324b3c90a2cfc0e09dbdbad81d07a1d0ba6c3.png" />
 </div>
 </div>
 <p>Let’s see what our dise difference looks like with this noise</p>
@@ -837,7 +839,7 @@ Requirement already satisfied: typing-extensions in /home/runner/work/pymedphys/
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../../_images/3a6b6824b922cfe43eff2aa253508e4c9ec1f981672dfc30d4ab5d5709626f90.png" src="../../../_images/3a6b6824b922cfe43eff2aa253508e4c9ec1f981672dfc30d4ab5d5709626f90.png" />
+<img alt="../../../_images/d2d3faedb9dccc9afa502315440e64139bf01d8a640ced622de030e7944c348a.png" src="../../../_images/d2d3faedb9dccc9afa502315440e64139bf01d8a640ced622de030e7944c348a.png" />
 </div>
 </div>
 <p>But what about our gamma?</p>
@@ -870,12 +872,12 @@ Requirement already satisfied: typing-extensions in /home/runner/work/pymedphys/
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/tmp/ipykernel_1940/511314066.py:1: DeprecationWarning: Parameter `quiet` will be deprecated in the future
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/tmp/ipykernel_1945/511314066.py:1: DeprecationWarning: Parameter `quiet` will be deprecated in the future
   gamma_with_noise = pymedphys.gamma(
 </pre></div>
 </div>
-<img alt="../../../_images/6fd0806aa1cd56819975927ae8d574d39045f57b63fb4c2eb1a062e3a8f49ef3.png" src="../../../_images/6fd0806aa1cd56819975927ae8d574d39045f57b63fb4c2eb1a062e3a8f49ef3.png" />
-<img alt="../../../_images/2794df30a23e4fc89cdfb825d33f3745e30583d67725405acf71af5ef487abd4.png" src="../../../_images/2794df30a23e4fc89cdfb825d33f3745e30583d67725405acf71af5ef487abd4.png" />
+<img alt="../../../_images/925c1af7f5a2e2701f3f37caf9d45f629bfad2c04bd2268074c4c91a50a2536b.png" src="../../../_images/925c1af7f5a2e2701f3f37caf9d45f629bfad2c04bd2268074c4c91a50a2536b.png" />
+<img alt="../../../_images/89e2c082688d6da73e40526930136419e04467dd72d6987948f6175852d795c1.png" src="../../../_images/89e2c082688d6da73e40526930136419e04467dd72d6987948f6175852d795c1.png" />
 </div>
 </div>
 </section>
