@@ -1,8 +1,16 @@
 """PyTest local plugins."""
 
-import os
+from __future__ import annotations
 
+import os
+from pathlib import Path
+from typing import Sequence
+
+import numpy as np
 import pytest
+import pydicom
+from pydicom.dataset import Dataset, FileDataset
+from pydicom.uid import generate_uid
 
 SKIPPING_CONFIG = {
     "slow": {
@@ -115,3 +123,157 @@ def pytest_ignore_collect(collection_path, config):  # pylint: disable = unused-
             )
         )
     )
+
+
+# --------------------------------------------------------------------------- #
+# Internal DICOM factory                                                      #
+# --------------------------------------------------------------------------- #
+class _MakeDICOM:
+    """Tiny factory that writes minimal—but valid—DICOM objects to disk."""
+
+    # ..................................................................... #
+    @staticmethod
+    def rt_dose(
+        fp: Path, *, shape: Sequence[int] = (5, 10, 10), dose_gy: float = 10.0
+    ) -> None:
+        fm = pydicom.dataset.FileMetaDataset()
+        fm.MediaStorageSOPClassUID = "1.2.840.10008.5.1.4.1.1.481.2"  # RTDOSE
+        fm.MediaStorageSOPInstanceUID = generate_uid()
+        fm.TransferSyntaxUID = "1.2.840.10008.1.2.1"
+        fm.ImplementationClassUID = generate_uid()
+
+        ds = FileDataset(str(fp), {}, file_meta=fm, preamble=b"\0" * 128)
+        ds.Modality = "RTDOSE"
+        ds.ImagePositionPatient = [0.0, 0.0, 0.0]
+        ds.ImageOrientationPatient = [1, 0, 0, 0, 1, 0]
+        ds.PixelSpacing = [2.0, 2.0]
+        ds.GridFrameOffsetVector = list(np.arange(shape[0]) * 3.0)
+
+        ds.DoseUnits = "GY"
+        ds.DoseGridScaling = 0.01
+        ds.Rows, ds.Columns, ds.NumberOfFrames = shape[1], shape[2], shape[0]
+        ds.SamplesPerPixel = 1
+        ds.PhotometricInterpretation = "MONOCHROME2"
+        ds.BitsAllocated = ds.BitsStored = 16
+        ds.HighBit = 15
+        ds.PixelRepresentation = 0
+
+        arr = np.full(shape, int(dose_gy / ds.DoseGridScaling), dtype=np.uint16)
+        ds.PixelData = arr.tobytes()
+        ds.save_as(fp, write_like_original=False)
+
+    # ..................................................................... #
+    @staticmethod
+    def rt_struct(fp: Path, *, names: Sequence[str] = ("PTV", "OAR")) -> None:
+        """Write a minimal RT-STRUCT whose contours lie fully inside the test dose grid."""
+        fm = pydicom.dataset.FileMetaDataset()
+        fm.MediaStorageSOPClassUID = "1.2.840.10008.5.1.4.1.1.481.3"
+        fm.MediaStorageSOPInstanceUID = generate_uid()
+        fm.TransferSyntaxUID = "1.2.840.10008.1.2.1"
+
+        ds = FileDataset(str(fp), {}, file_meta=fm, preamble=b"\0" * 128)
+        ds.Modality = "RTSTRUCT"
+        ds.StructureSetLabel = "pytest-set"
+        ds.StructureSetROISequence = []
+        ds.ROIContourSequence = []
+        ds.RTROIObservationsSequence = []
+
+        colours = [(255, 0, 0), (0, 255, 0)]
+        for i, name in enumerate(names, start=1):
+            # ‒‒ ROI header ------------------------------------------------
+            ss_roi = Dataset()
+            ss_roi.ROINumber, ss_roi.ROIName = i, name
+            ds.StructureSetROISequence.append(ss_roi)
+
+            # ‒‒ Observation ---------------------------------------------
+            roi_obs = Dataset()
+            roi_obs.ReferencedROINumber = i
+            roi_obs.RTROIInterpretedType = "PTV" if "PTV" in name else "ORGAN"
+            ds.RTROIObservationsSequence.append(roi_obs)
+
+            # ‒‒ Contours -------------------------------------------------
+            roi_con = Dataset()
+            roi_con.ReferencedROINumber = i
+            roi_con.ROIDisplayColor = list(colours[(i - 1) % 2])
+            roi_con.ContourSequence = []
+
+            # rectangle 0‥8 mm  (fully inside 0‥20 mm dose grid)
+            s = 8.0
+            for z in (0.0, 3.0, 6.0):
+                c = Dataset()
+                c.ContourGeometricType = "CLOSED_PLANAR"
+                c.NumberOfContourPoints = 4
+                c.ContourData = [
+                    0.0,
+                    0.0,
+                    z,
+                    s,
+                    0.0,
+                    z,
+                    s,
+                    s,
+                    z,
+                    0.0,
+                    s,
+                    z,
+                ]
+                roi_con.ContourSequence.append(c)
+
+            ds.ROIContourSequence.append(roi_con)
+
+        ds.save_as(fp, write_like_original=False)
+
+    # ..................................................................... #
+    @staticmethod
+    def ct_series(dir_: Path, *, z_positions: Sequence[float] = (0.0, 2.0)) -> None:
+        dir_.mkdir(exist_ok=True)
+        series_instance_uid = generate_uid()
+
+        for idx, z in enumerate(z_positions):
+            fm = pydicom.dataset.FileMetaDataset()
+            fm.MediaStorageSOPClassUID = "1.2.840.10008.5.1.4.1.1.2"  # CT Image
+            fm.MediaStorageSOPInstanceUID = generate_uid()
+            fm.TransferSyntaxUID = "1.2.840.10008.1.2.1"
+
+            ds = FileDataset(
+                str(dir_ / f"ct_{idx:03d}.dcm"), {}, file_meta=fm, preamble=b"\0" * 128
+            )
+            ds.Modality = "CT"
+            ds.SeriesInstanceUID = series_instance_uid
+            ds.ImagePositionPatient = [0.0, 0.0, z]
+            ds.ImageOrientationPatient = [1, 0, 0, 0, 1, 0]
+            ds.PixelSpacing = [1.0, 1.0]
+            ds.Rows = ds.Columns = 10
+            ds.SamplesPerPixel = 1
+            ds.PhotometricInterpretation = "MONOCHROME2"
+            ds.BitsAllocated = ds.BitsStored = 16
+            ds.HighBit = 15
+            ds.PixelRepresentation = 1
+            ds.RescaleIntercept = -1000.0
+            ds.RescaleSlope = 1.0
+            ds.PixelData = np.full((10, 10), 1000, dtype=np.int16).tobytes()
+            ds.save_as(dir_ / f"ct_{idx:03d}.dcm", write_like_original=False)
+
+
+# --------------------------------------------------------------------------- #
+# Pytest fixtures                                                             #
+# --------------------------------------------------------------------------- #
+@pytest.fixture(scope="module")
+def rt_dose_file(tmp_path_factory):
+    fp = tmp_path_factory.mktemp("dcm") / "dose.dcm"
+    _MakeDICOM.rt_dose(fp, shape=(5, 10, 10), dose_gy=20.0)
+    return fp
+
+
+@pytest.fixture(scope="module")
+def rt_struct_file(tmp_path_factory):
+    fp = tmp_path_factory.mktemp("dcm") / "struct.dcm"
+    _MakeDICOM.rt_struct(fp, names=("PTV", "OAR"))
+    return fp
+
+
+@pytest.fixture(scope="module")
+def ct_dir(tmp_path_factory):
+    dir_ = tmp_path_factory.mktemp("ct")
+    _MakeDICOM.ct_series(dir_, z_positions=(0.0, 2.5, 5.0))
+    return dir_
