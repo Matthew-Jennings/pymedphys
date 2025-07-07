@@ -64,8 +64,8 @@ within the `Release Notes`_.
 Community
 **************
 
-PyMedPhys has a `Discourse community <https://pymedphys.discourse.group/>`_
-to both help you find your feet using PyMedPhys and to facilitate collaboration
+PyMedPhys has a `GitHub Discussions <https://github.com/pymedphys/pymedphys/discussions>`_
+page to both help you find your feet using PyMedPhys and to facilitate collaboration
 and general discussion. Please reach out over there and we'd love to get to
 know you!
 
@@ -126,7 +126,7 @@ Maintainers
 .. _`Simon Biggs`: https://github.com/SimonBiggs
 
 * `Stuart Swerdloff`_
-    * `ELEKTA Pty Ltd`_: New Zealand
+    * `SJS Targeted Solutions, LLP`_, New Zealand
 
 .. _`Stuart Swerdloff`: https://github.com/sjswerdloff
 
@@ -237,6 +237,8 @@ Past contributors
 .. _`Hospital General Universitario Gregorio Marañón`: https://www.comunidad.madrid/hospital/gregoriomaranon/
 
 .. _`Swerdloff Family`: https://github.com/sjswerdloff
+
+.. _`SJS Targeted Solutions, LLP`: https://github.com/sjswerdloff
 
 .. _`Radformation Inc.`: https://radformation.com/
 
