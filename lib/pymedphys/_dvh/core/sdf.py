@@ -1,115 +1,108 @@
 """
-Signed-distance utilities and voxeliser with full support for the generic
-end-capping specification (July 2025).
+Signed-distance utilities and voxeliser
+======================================
+
+Fully supports the “generic” five-mode axial end-capping specification
+(July 2025).
 
 ---------------------------------------------------------------------------
 Overview
 ---------------------------------------------------------------------------
-*   **2-D core**  Fast, numba-accelerated routines for computing the signed
-    distance from an (x, y) point to a single polygon
-    (`signed_distance_2d`).  The inside / outside test uses a winding-number
-    implementation that is robust to self-intersections and duplicate
-    vertices.
-*   **3-D wrapper** `structure_signed_distance` blends distances slice-by-
-    slice along *z* and adds one of five possible axial end-caps
-    (TRUNCATE | FIXED_PRISM | USER_PRISM | SHAPE_PLUS_PRISM | SHAPE_ONLY).
-*   **Voxel mask** `Structure.mask()` turns the SDF into a 3-D boolean mask
-    suitable for volume calculations and DVH generation.
+* **2-D core**   `signed_distance_2d()` – fast Numba kernel that returns the
+  signed distance from a point to a *single* polygon, using a winding-number
+  test that is robust to duplicate vertices & self-intersections.
+
+* **3-D wrapper** `structure_signed_distance()` interpolates slice-by-slice
+  SDFs and attaches one of five possible end-caps
+  (`TRUNCATE | FIXED_PRISM | USER_PRISM | SHAPE_PLUS_PRISM | SHAPE_ONLY`).
+
+* **Voxel mask** `Structure.mask()` converts the 3-D SDF into an occupancy
+  grid with *adaptive supersampling* so that small structures do not vanish
+  at coarse voxel sizes.
 
 Public API
 ---------------------------------------------------------------------------
-*   `Structure.signed_distance(points, *, cap_mode="SHAPE_ONLY", …)`
-*   `Structure.mask(voxel_size=0.2, *, cap_mode="SHAPE_ONLY", …)`
+* `Structure.signed_distance(points, *, cap_mode="SHAPE_ONLY", …)`
+* `Structure.mask(voxel_size=0.2, *, cap_mode="SHAPE_ONLY", …)`
 """
 
 from __future__ import annotations
 
 import math
-from typing import Literal, Sequence
+from dataclasses import dataclass
+from typing import Literal, Optional, Sequence
 
 import numba as nb
 import numpy as np
+from numba.typed import List as NbList
 from numpy.typing import NDArray
 
+# Local import
 from .data_types import Structure
 
 # --------------------------------------------------------------------------- #
-#  Constants for numerical stability and clarity                              #
+#  Numerical constants                                                        #
 # --------------------------------------------------------------------------- #
 
 # Numerical tolerances
-EPSILON = 1e-9  # General epsilon for avoiding division by zero
-Z_TOLERANCE = 1e-4  # Tolerance for Z-coordinate comparisons (0.1 mm)
-DEGENERATE_SLICE_OFFSET = 1e-3  # Offset for single-slice structures (1 mm)
+EPSILON = 1e-9  # Avoid divide-by-zero & FP glitches
+Z_TOLERANCE = 1e-4  # Two contours belong to same slice if |Δz| < 0.1 mm
+DEGENERATE_SLICE_OFFSET = 0.5  # mm – gives single-slice ROIs a tangible thickness
 
-# Distance computation
-INFINITY_PROXY = 1e9  # Large number representing infinity in distance calculations
-
-# Input validation limits
-MIN_VOXEL_SIZE = 0.01  # Minimum allowed voxel size (0.01 mm)
-MAX_VOXEL_SIZE = 10.0  # Maximum allowed voxel size (10 mm)
-MAX_COORDINATE = 1e6  # Maximum allowed coordinate value (1000 m)
+# Distance / bounding-box helpers
+INFINITY_PROXY = 1e9
+MIN_VOXEL_SIZE = 0.01  # 10 µm
+MAX_VOXEL_SIZE = 10.0  # 10 mm
+MAX_COORDINATE = 1e6  # 1 km – far outside any DICOM frame
 
 # --------------------------------------------------------------------------- #
-#  Low-level helpers (with enhanced robustness)                               #
+#  Advanced-feature configuration                                             #
 # --------------------------------------------------------------------------- #
 
 
-@nb.njit(inline="always")
+@dataclass
+class MaskConfig:
+    """Configuration for the (experimental) `mask_improved()` façade."""
+
+    use_batching: bool = True
+    batch_size: int = 1000
+    use_parallel: bool = False
+    n_threads: Optional[int] = None
+    adaptive_grid: bool = True
+    adaptive_threshold: float = 0.2
+    min_adaptive_grid: int = 3
+    max_adaptive_grid: int = 7
+    nearly_empty_threshold: float = 0.001
+    nearly_full_threshold: float = 0.999
+
+
+# --------------------------------------------------------------------------- #
+#  Low-level 2-D SDF helpers                                                  #
+# --------------------------------------------------------------------------- #
+
+
+@nb.njit(inline="always", fastmath=True)
 def _dist_pt_segment(px, py, x1, y1, x2, y2):
-    """
-    Euclidean distance from an arbitrary point *(px, py)* to the finite line
-    segment *[(x1, y1), (x2, y2)]*.
-
-    The routine is hot-looped from `signed_distance_2d` and therefore:
-        * uses **Numba** with `inline="always"` for maximal SIMD fusion;
-        * avoids heap allocations entirely;
-        * returns the *unsigned* distance (the caller decides the sign).
-    """
+    """Euclidean distance from (px, py) to the finite segment [(x1, y1)-(x2, y2)]."""
     vx, vy = x2 - x1, y2 - y1
-    segment_length_sq = vx * vx + vy * vy
-
-    # Handle degenerate segment (point)
-    if segment_length_sq < EPSILON:
+    seg_len2 = vx * vx + vy * vy
+    if seg_len2 < EPSILON:
         return math.hypot(px - x1, py - y1)
 
     wx, wy = px - x1, py - y1
-    t = (vx * wx + vy * wy) / segment_length_sq
+    t = (vx * wx + vy * wy) / seg_len2
     t = 0.0 if t < 0.0 else 1.0 if t > 1.0 else t
     dx, dy = wx - t * vx, wy - t * vy
     return math.hypot(dx, dy)
 
 
-@nb.njit(inline="always")
+@nb.njit(inline="always", fastmath=True)
 def _winding_number(
     px: float, py: float, xs: NDArray[np.float32], ys: NDArray[np.float32]
 ) -> int:
-    """
-    Fast winding-number implementation.
-
-    Parameters
-    ----------
-    px, py
-        Query point.
-    xs, ys
-        Vertex coordinates **clockwise or anti-clockwise**.  Orientation
-        does not matter – we rely on the parity of edge crossings alone,
-        matching the DICOM even–odd filling rule.
-
-    Returns
-    -------
-    int
-        Zero ⇒ outside, non-zero ⇒ inside.
-
-    Notes
-    -----
-    * Degenerate edges (zero length) are skipped to avoid NaNs.
-    * This version is branch-reduced to keep the JIT kernel simple.
-    """
+    """Even–odd winding number (0 → outside, non-zero → inside)."""
     wn = 0
     n = xs.size
-
-    # Handle degenerate polygon
     if n < 3:
         return 0
 
@@ -121,37 +114,23 @@ def _winding_number(
         if abs(y2 - y1) < EPSILON and abs(x2 - x1) < EPSILON:
             continue
 
-        if y1 <= py:
-            if y2 > py and (x2 - x1) * (py - y1) - (px - x1) * (y2 - y1) > 0:
+        if y1 <= py < y2:
+            if (x2 - x1) * (py - y1) - (px - x1) * (y2 - y1) > 0:
                 wn += 1
-        else:
-            if y2 <= py and (x2 - x1) * (py - y1) - (px - x1) * (y2 - y1) < 0:
+        elif y2 <= py < y1:
+            if (x2 - x1) * (py - y1) - (px - x1) * (y2 - y1) < 0:
                 wn -= 1
     return wn
 
 
-@nb.njit(parallel=True, cache=True)
+@nb.njit(parallel=True, fastmath=True, cache=True)
 def signed_distance_2d(
     contour_pts: NDArray[np.float32], queries_xy: NDArray[np.float32]
 ) -> NDArray[np.float32]:
     """
-    Signed distance from one *simple polygon* to many query points.
-
-    The polygon is taken to lie in the *xy*-plane at *z = const*.
-
-    Parameters
-    ----------
-    contour_pts
-        **N × 3** array of (x, y, z) vertices.  The *z* component is ignored.
-    queries_xy
-        **M × 2** array of query coordinates (x, y).
-
-    Returns
-    -------
-    M-element ``float32`` array.
-        Negative ⇒ inside • Positive ⇒ outside.
+    Signed distance from a **simple polygon** to many query points in the *xy*
+    plane. Negative → inside, positive → outside.
     """
-    # Input validation
     if contour_pts.shape[0] < 3:
         raise ValueError("Contour must have at least 3 points")
 
@@ -175,28 +154,18 @@ def signed_distance_2d(
     return out
 
 
-def _slice_signed_distance(
-    polys: list[NDArray[np.float32]], x: float, y: float
-) -> float:
+# A Numba-friendly variant that accepts a *typed list* of polygons ------------
+@nb.njit(cache=True, fastmath=True)
+def _slice_signed_distance_nb(polys: NbList, x: float, y: float) -> float:
     """
-    Signed distance to a *slice* that may contain **multiple islands and/or
-    holes**.
-
-    The even–odd (XOR) rule gives DICOM-compatible behaviour:
-        • odd number of negative distances … inside
-        • even number … outside
-
-    The function deliberately **ignores winding direction**
-    (DICOM does not prescribe CW/CCW for separate islands).
+    Distance to an ROI *slice* that may contain multiple islands & holes
+    (DICOM even–odd fill rule).
     """
-    if not polys:
-        return INFINITY_PROXY
-
     min_abs, crossings = INFINITY_PROXY, 0
     q = np.array([[x, y]], np.float32)
 
-    for P in polys:
-        if P.shape[0] < 3:  # Skip degenerate polygons
+    for P in polys:  # typed list → zero Python overhead
+        if P.shape[0] < 3:
             continue
         d = signed_distance_2d(P, q)[0]
         if abs(d) < min_abs:
@@ -208,7 +177,7 @@ def _slice_signed_distance(
 
 
 # --------------------------------------------------------------------------- #
-#  End-cap strategy helpers                                                   #
+#  3-D signed distance                                                        #
 # --------------------------------------------------------------------------- #
 
 _CAPS = {
@@ -217,37 +186,11 @@ _CAPS = {
     "USER_PRISM",
     "SHAPE_PLUS_PRISM",
     "SHAPE_ONLY",
-    # ▸ backwards-compat synonyms
-    "FLAT",
-    "SMOOTH",
 }
 
 
-def _normalise_mode(s: str) -> str:
-    """Map user-supplied *cap_mode* strings to one of the five canonical
-    identifiers, while preserving backward compatibility.
-    """
-    if not isinstance(s, str):
-        raise TypeError(f"cap_mode must be string, got {type(s).__name__}")
-
-    s_up = s.strip().upper()
-    if s_up == "FLAT":
-        return "FIXED_PRISM"
-    if s_up == "SMOOTH":
-        return "SHAPE_ONLY"
-    if s_up not in _CAPS:
-        raise ValueError(f"Unknown cap_mode {s!r}. Valid modes: {sorted(_CAPS)}")
-    return s_up
-
-
-# --------------------------------------------------------------------------- #
-#  3-D signed distance                                                        #
-# --------------------------------------------------------------------------- #
-
-
 def _validate_structure(struct: Structure):
-    """Validate structure has valid contours."""
-    if not hasattr(struct, "contours") or not struct.contours:
+    if not getattr(struct, "contours", None):
         raise ValueError("Structure must have at least one contour")
 
     for i, c in enumerate(struct.contours):
@@ -260,23 +203,18 @@ def _validate_structure(struct: Structure):
 
 
 def _prepare_slices(struct: Structure):
-    """Return z-list and polygons grouped by z (duplicates merged)."""
+    """Sort contours by z and merge polygons that belong to the same slice."""
     _validate_structure(struct)
 
     z_unique: list[float] = []
     polys: list[list[NDArray[np.float32]]] = []
 
-    # Sort contours by slice position to ensure correct grouping
-    sorted_contours = sorted(struct.contours, key=lambda c: c.slice_position)
-
-    for c in sorted_contours:
+    for c in sorted(struct.contours, key=lambda c: c.slice_position):
         z = float(c.slice_position)
 
-        # Validate z coordinate
         if abs(z) > MAX_COORDINATE:
             raise ValueError(f"Slice position {z} exceeds maximum allowed value")
 
-        # Check if this z is close to the last one
         if z_unique and abs(z - z_unique[-1]) < Z_TOLERANCE:
             polys[-1].append(c.points.astype(np.float32))
         else:
@@ -285,7 +223,7 @@ def _prepare_slices(struct: Structure):
 
     z_arr = np.array(z_unique, np.float32)
 
-    # Handle single-slice structures
+    # Single-slice ROI → duplicate with ±0.5 mm offset so interpolation works
     if z_arr.size == 1:
         z0 = z_arr[0]
         z_arr = np.array(
@@ -293,7 +231,15 @@ def _prepare_slices(struct: Structure):
         )
         polys = [polys[0], polys[0]]
 
-    return z_arr, polys
+    # Convert to Numba typed list of typed lists
+    nb_polys = NbList()
+    for slice_polys in polys:
+        inner = NbList()
+        for P in slice_polys:
+            inner.append(P)
+        nb_polys.append(inner)
+
+    return z_arr, nb_polys
 
 
 def structure_signed_distance(
@@ -306,84 +252,43 @@ def structure_signed_distance(
         "USER_PRISM",
         "SHAPE_PLUS_PRISM",
         "SHAPE_ONLY",
-        "FLAT",
-        "SMOOTH",
     ] = "SHAPE_ONLY",
     prism_fraction: float = 0.25,
     prism_cap_limit: float | None = None,
 ) -> NDArray[np.float32]:
-    r"""
-    Signed distance from an arbitrary 3-D point cloud to a closed
-    *Region-Of-Interest* (ROI).
-
-    ----------  ------------------------------------------------------------
-    Cap mode    Geometric interpretation
-    ----------  ------------------------------------------------------------
-    TRUNCATE    No axial cap – the ROI ends flush with the first/last slice.
-    FIXED_PRISM ½ Δz prism attached to each end.
-    USER_PRISM  f · Δz prism (*f* ∈ \[0, 0.5\]) at each end.
-    SHAPE_PLUS  Linear slice-to-slice blending **plus** the ½ Δz prism.
-    SHAPE_ONLY  Pure slice-to-slice blending extended to a cone apex.
-    ----------  ------------------------------------------------------------
-
-    Parameters
-    ----------
-    struct
-        A fully-populated :class:`~pymedphys._dvh.core.data_types.Structure`
-        (must have ≥1 contour).
-    points
-        Array-like of shape (N, 3) **or** broadcastable to that.
-    cap_mode, prism_fraction, prism_cap_limit
-        See table and Notes below.
-
-    Returns
-    -------
-    np.ndarray, dtype ``float32``
-        *N* signed distances.
-
-    Notes
-    -----
-    *   Distances are exact *within machine precision* for planar slices and
-        linear interpolation, but the cone/prism cap is an *analytic*
-        extension – no tessellation artefacts.
-    *   When *prism_cap_limit* is set, the half-length is
-        ``min(cap_length, prism_cap_limit)``.  This mirrors the ProKnow
-        interpretation so third-party results can be compared 1-to-1.
-    *   The function is intentionally **branch-heavy** – the outer loop is
-        pure-Python because the point cloud size is usually small in
-        clinical queries (< 10⁴ points).  Optimising further with Numba
-        vectorisation gives negligible speed-ups but complicates testing.
     """
-    mode = _normalise_mode(cap_mode)
+    Signed distance from a point cloud to a **closed** ROI.
 
-    # Validate and prepare points
+    Cap-mode semantics (identical to ProKnow):
+
+    * **TRUNCATE**    ROI ends flush with first / last slice.
+    * **FIXED_PRISM**  adds a ½ Δz prism at each end.
+    * **USER_PRISM**  adds *f·Δz* prism at each end (0 ≤ *f* ≤ 0.5).
+    * **SHAPE_PLUS_PRISM** linear blend + ½ Δz prism (best of both worlds).
+    * **SHAPE_ONLY**  linear blend toward a cone apex (no flat prism).
+    """
     pts = np.asarray(points, np.float32).reshape(-1, 3)
     if pts.size == 0:
-        return np.array([], np.float32)
-
-    # Check for non-finite values
+        return np.empty(0, np.float32)
     if not np.all(np.isfinite(pts)):
         raise ValueError("Points contain non-finite values")
-
-    # Check coordinate bounds
     if np.any(np.abs(pts) > MAX_COORDINATE):
-        raise ValueError(f"Points contain coordinates exceeding {MAX_COORDINATE}")
+        raise ValueError("Point coordinates exceed allowed range")
 
     z_slices, polys = _prepare_slices(struct)
 
-    # local slice spacing
     dz_inf = z_slices[1] - z_slices[0]
     dz_sup = z_slices[-1] - z_slices[-2]
 
-    # cap lengths per mode ---------------------------------------------------
-    if mode == "TRUNCATE":
+    # Cap lengths -------------------------------------------------------------
+    if cap_mode == "TRUNCATE":
         cap_inf = cap_sup = 0.0
-    elif mode == "FIXED_PRISM":
+    elif cap_mode == "FIXED_PRISM":
         cap_inf, cap_sup = 0.5 * dz_inf, 0.5 * dz_sup
-    elif mode == "USER_PRISM":
+    elif cap_mode == "USER_PRISM":
         f = max(0.0, min(0.5, prism_fraction))
         cap_inf, cap_sup = f * dz_inf, f * dz_sup
-    else:  # SHAPE_PLUS_PRISM or SHAPE_ONLY
+    else:  # SHAPE_PLUS_PRISM | SHAPE_ONLY
         cap_inf, cap_sup = 0.5 * dz_inf, 0.5 * dz_sup
 
     if prism_cap_limit is not None:
@@ -395,129 +300,99 @@ def structure_signed_distance(
     z_cap_min = z_slices[0] - cap_inf
     z_cap_max = z_slices[-1] + cap_sup
 
-    # pointer to last / first slice polygons
-    P_inf = polys[0]
-    P_sup = polys[-1]
+    # End-slice centroids (cone apex for SHAPE_ONLY)
+    all_pts_inf = np.vstack(polys[0])
+    all_pts_sup = np.vstack(polys[-1])
+    cx_inf, cy_inf = np.mean(all_pts_inf, axis=0)[:2]
+    cx_sup, cy_sup = np.mean(all_pts_sup, axis=0)[:2]
 
-    # slice centroids (for SHAPE_ONLY cones)
-    # Note: Vertex mean is a good approximation for the centroid of a
-    # symmetric polygon, but not for a general polygon. This is a
-    # standard and robust modeling choice for defining the cone apex.
-    all_pts_inf = np.vstack(P_inf)
-    all_pts_sup = np.vstack(P_sup)
-
-    cx_inf, cy_inf = (
-        np.mean(all_pts_inf, axis=0)[:2] if all_pts_inf.shape[0] > 0 else (0.0, 0.0)
-    )
-    cx_sup, cy_sup = (
-        np.mean(all_pts_sup, axis=0)[:2] if all_pts_sup.shape[0] > 0 else (0.0, 0.0)
-    )
-
+    # --------------------------------------------------------------------- #
+    #  Main loop – still in Python, but the expensive                        #
+    #  slice-distance calls are now Numba-accelerated.                       #
+    # --------------------------------------------------------------------- #
     out = np.empty(len(pts), np.float32)
 
     for i, (x, y, z) in enumerate(pts):
-        # ------------------------------------------------------------------ #
-        #  Inferior side                                                     #
-        # ------------------------------------------------------------------ #
+        # ---------------------------- inferior side -----------------------
         if z < z_slices[0]:
-            d_xy = _slice_signed_distance(P_inf, x, y)
+            d_xy = _slice_signed_distance_nb(polys[0], x, y)
             dz = z_slices[0] - z
 
-            # ---------- TRUNCATE or outside USER / FIXED prism -------------
-            if mode == "TRUNCATE" or (
-                mode in {"FIXED_PRISM", "USER_PRISM"} and z < z_cap_min
+            if cap_mode == "TRUNCATE" or (
+                cap_mode in {"FIXED_PRISM", "USER_PRISM"} and z <= z_cap_min
             ):
-                # Distance to the capped prism volume boundary
-                axial_dist = dz - cap_inf if mode != "TRUNCATE" else dz
-                out[i] = math.hypot(max(0.0, d_xy), axial_dist)
+                axial = dz - cap_inf if cap_mode != "TRUNCATE" else dz
+                out[i] = math.hypot(max(0.0, d_xy), axial)
                 continue
 
-            # ------------------- Prism-based caps --------------------------
-            if mode in {"FIXED_PRISM", "USER_PRISM", "SHAPE_PLUS_PRISM"}:
-                # Inside the prism cap's axial range, distance is just lateral
+            if cap_mode in {"FIXED_PRISM", "USER_PRISM", "SHAPE_PLUS_PRISM"}:
                 out[i] = d_xy
                 continue
 
-            # ------------------------ SHAPE_ONLY ---------------------------
-            # Beyond the cone apex, distance is Euclidean to the apex point
+            # SHAPE_ONLY  – cone apex
             if dz >= cap_inf or cap_inf < EPSILON:
-                axial_dist_from_apex = dz - cap_inf
-                out[i] = math.hypot(x - cx_inf, y - cy_inf, axial_dist_from_apex)
+                out[i] = math.hypot(x - cx_inf, y - cy_inf, dz - cap_inf)
                 continue
 
-            # Inside the cone cap volume
-            t = min(1.0, dz / cap_inf)  # 0 (at slice) → 1 (at apex)
-            scale = max(EPSILON, 1.0 - t)  # Avoid division by zero
+            t = min(1.0, dz / cap_inf)
+            scale = max(EPSILON, 1.0 - t)
             sx = cx_inf + (x - cx_inf) / scale
             sy = cy_inf + (y - cy_inf) / scale
-            d_cap = _slice_signed_distance(P_inf, sx, sy) * scale
+            d_cap = _slice_signed_distance_nb(polys[0], sx, sy) * scale
             out[i] = d_cap
             continue
 
-        # ------------------------------------------------------------------ #
-        #  Superior side                                                     #
-        # ------------------------------------------------------------------ #
+        # ---------------------------- superior side -----------------------
         if z > z_slices[-1]:
-            d_xy = _slice_signed_distance(P_sup, x, y)
+            d_xy = _slice_signed_distance_nb(polys[-1], x, y)
             dz = z - z_slices[-1]
 
-            if mode == "TRUNCATE" or (
-                mode in {"FIXED_PRISM", "USER_PRISM"} and z > z_cap_max
+            if cap_mode == "TRUNCATE" or (
+                cap_mode in {"FIXED_PRISM", "USER_PRISM"} and z >= z_cap_max
             ):
-                # Distance to the capped prism volume boundary
-                axial_dist = dz - cap_sup if mode != "TRUNCATE" else dz
-                out[i] = math.hypot(max(0.0, d_xy), axial_dist)
+                axial = dz - cap_sup if cap_mode != "TRUNCATE" else dz
+                out[i] = math.hypot(max(0.0, d_xy), axial)
                 continue
 
-            if mode in {"FIXED_PRISM", "USER_PRISM", "SHAPE_PLUS_PRISM"}:
-                # Inside the prism cap's axial range, distance is just lateral
+            if cap_mode in {"FIXED_PRISM", "USER_PRISM", "SHAPE_PLUS_PRISM"}:
                 out[i] = d_xy
                 continue
 
-            # ------------------------ SHAPE_ONLY ---------------------------
-            # Beyond the cone apex, distance is Euclidean to the apex point
             if dz >= cap_sup or cap_sup < EPSILON:
-                axial_dist_from_apex = dz - cap_sup
-                out[i] = math.hypot(x - cx_sup, y - cy_sup, axial_dist_from_apex)
+                out[i] = math.hypot(x - cx_sup, y - cy_sup, dz - cap_sup)
                 continue
 
-            # Inside the cone cap volume
             t = min(1.0, dz / cap_sup)
             scale = max(EPSILON, 1.0 - t)
             sx = cx_sup + (x - cx_sup) / scale
             sy = cy_sup + (y - cy_sup) / scale
-            d_cap = _slice_signed_distance(P_sup, sx, sy) * scale
+            d_cap = _slice_signed_distance_nb(polys[-1], sx, sy) * scale
             out[i] = d_cap
             continue
 
-        # ------------------------------------------------------------------ #
-        #  Interior region – shape-based linear blend                        #
-        # ------------------------------------------------------------------ #
-        # Find the slice interval containing z
+        # ---------------------------- interior ----------------------------
         k = np.searchsorted(z_slices, z, side="right") - 1
-        k = max(0, min(k, len(z_slices) - 2))  # Clamp to valid range
+        k = max(0, min(k, len(z_slices) - 2))
 
-        # Check if we're exactly on the last slice
         if k == len(z_slices) - 1 or abs(z - z_slices[-1]) < EPSILON:
-            out[i] = _slice_signed_distance(polys[-1], x, y)
+            out[i] = _slice_signed_distance_nb(polys[-1], x, y)
             continue
 
-        # Linear interpolation between slices
         z_range = z_slices[k + 1] - z_slices[k]
-        if z_range < EPSILON:  # Degenerate case
-            out[i] = _slice_signed_distance(polys[k], x, y)
+        if z_range < EPSILON:
+            out[i] = _slice_signed_distance_nb(polys[k], x, y)
             continue
 
         dz_local = (z - z_slices[k]) / z_range
-        d0 = _slice_signed_distance(polys[k], x, y)
-        d1 = _slice_signed_distance(polys[k + 1], x, y)
+        d0 = _slice_signed_distance_nb(polys[k], x, y)
+        d1 = _slice_signed_distance_nb(polys[k + 1], x, y)
         out[i] = d0 * (1.0 - dz_local) + d1 * dz_local
 
     return out
 
 
 # --------------------------------------------------------------------------- #
-#  Voxel mask wrapper                                                         #
+#  Voxel-mask wrapper                                                         #
 # --------------------------------------------------------------------------- #
 
 
@@ -526,110 +401,170 @@ def _mask_wrapper(
     voxel_size: float | Sequence[float] = 0.2,
     *,
     cap_mode: str = "SHAPE_ONLY",
+    tol: float | None = 2e-3,  # target |Δfill| per voxel (0.2 %)
+    max_levels: int = 3,  # allow one extra refinement pass
+    min_grid: int = 3,
     **sd_kwargs,
 ):
     """
-    Rasterise the ROI into a regular grid.
-
-    Parameters
-    ----------
-    self
-        Host :class:`Structure`.
-    voxel_size
-        Scalar → isotropic • 3-tuple → (dx, dy, dz).  Units: **mm**.
-    cap_mode, **sd_kwargs
-        Forwarded verbatim to :func:`structure_signed_distance`.
+    Rasterise the ROI into a regular grid **with adaptive supersampling**.
 
     Returns
     -------
-    mask : np.ndarray, ``bool``
-        3-D occupancy grid.  ``True`` = inside.
-    origin : 3-tuple[float]
-        (x₀, y₀, z₀) of the **first** voxel centre.
+    mask   : np.ndarray[float32]
+        Fractional occupancy (0 – 1) for every voxel.
+    origin : (x0, y0, z0)
+        World co-ordinates of voxel [0, 0, 0] centre.
     """
-    # Validate voxel size
+    # ------------------------------------------------------------------ #
+    # 1  Sanity-check & build the voxel grid                             #
+    # ------------------------------------------------------------------ #
     if isinstance(voxel_size, (int, float)):
         voxel_size = (float(voxel_size),) * 3
+    dx, dy, dz = map(float, voxel_size)
 
-    try:
-        dx, dy, dz = map(float, voxel_size)
-    except (TypeError, ValueError):
-        raise ValueError("voxel_size must be a number or sequence of 3 numbers")
-
-    # Check voxel size bounds
-    for v, name in [(dx, "dx"), (dy, "dy"), (dz, "dz")]:
+    for v, name in zip((dx, dy, dz), "xyz"):
         if v <= 0:
-            raise ValueError(f"Voxel size {name}={v} must be positive")
-        if v < MIN_VOXEL_SIZE:
-            raise ValueError(f"Voxel size {name}={v} is below minimum {MIN_VOXEL_SIZE}")
-        if v > MAX_VOXEL_SIZE:
-            raise ValueError(f"Voxel size {name}={v} exceeds maximum {MAX_VOXEL_SIZE}")
+            raise ValueError(f"{name} voxel dimension must be positive")
+        if not (MIN_VOXEL_SIZE <= v <= MAX_VOXEL_SIZE):
+            raise ValueError(
+                f"{name} voxel dimension {v} outside valid range "
+                f"[{MIN_VOXEL_SIZE}, {MAX_VOXEL_SIZE}] mm"
+            )
 
     bb_min, bb_max = self.compute_bounding_box()
 
-    # Validate bounding box
-    if not np.all(np.isfinite(bb_min)) or not np.all(np.isfinite(bb_max)):
-        raise ValueError("Structure bounding box contains non-finite values")
-
-    mode = _normalise_mode(cap_mode)
-
+    # Pad Z for cap-modes that protrude beyond the first / last slice
     pad_z = 0.0
-    if mode in {"FIXED_PRISM", "USER_PRISM", "SHAPE_PLUS_PRISM", "SHAPE_ONLY"}:
+    if cap_mode in {"FIXED_PRISM", "USER_PRISM", "SHAPE_PLUS_PRISM", "SHAPE_ONLY"}:
         zs = sorted({float(c.slice_position) for c in self.contours})
-        if len(zs) > 1:
-            pad_z = 0.5 * max(zs[1] - zs[0], zs[-1] - zs[-2])
-        else:
-            pad_z = dz
+        pad_z = 0.5 * (zs[1] - zs[0]) if len(zs) > 1 else dz
 
     bb_min -= (dx, dy, pad_z)
     bb_max += (dx, dy, pad_z)
 
-    # Generate grid with safety checks for memory
-    grid_size = ((bb_max - bb_min) / np.array([dx, dy, dz])).astype(int) + 1
-    total_voxels = np.prod(grid_size)
+    xs = np.arange(bb_min[0] + 0.5 * dx, bb_max[0] - 0.5 * dx + 1e-9, dx, np.float32)
+    ys = np.arange(bb_min[1] + 0.5 * dy, bb_max[1] - 0.5 * dy + 1e-9, dy, np.float32)
+    zs = np.arange(bb_min[2] + 0.5 * dz, bb_max[2] - 0.5 * dz + 1e-9, dz, np.float32)
 
-    if total_voxels > 1e9:  # 1 billion voxels safety limit
-        raise ValueError(
-            f"Grid size {grid_size} would create {total_voxels:.1e} voxels, exceeding safety limit"
-        )
-
-    xs = np.arange(bb_min[0], bb_max[0] + 0.5 * dx, dx, np.float32)
-    ys = np.arange(bb_min[1], bb_max[1] + 0.5 * dy, dy, np.float32)
-    zs = np.arange(bb_min[2], bb_max[2] + 0.5 * dz, dz, np.float32)
+    # ---------------------- NEW: grid shift so every slice plane aligns -----
+    for z0 in sorted({float(c.slice_position) for c in self.contours}):
+        off = (z0 - zs[0]) % dz
+        if 1e-6 < off < dz - 1e-6:
+            zs += dz - off  # rigid shift – keeps spacing identical
+            break
+    # -----------------------------------------------------------------------
 
     gX, gY, gZ = np.meshgrid(xs, ys, zs, indexing="xy")
-    sdf = structure_signed_distance(
+    centres = np.column_stack([gX.ravel(), gY.ravel(), gZ.ravel()])
+
+    # ------------------------------------------------------------------ #
+    # 2  Initial SDF at voxel centres                                    #
+    # ------------------------------------------------------------------ #
+    sdf = structure_signed_distance(self, centres, cap_mode=cap_mode, **sd_kwargs)
+
+    half_diag = 0.5 * math.sqrt(dx * dx + dy * dy + dz * dz)
+    deep_in = sdf < -half_diag
+    deep_out = sdf > half_diag
+    boundary = ~(deep_in | deep_out)
+
+    mask = np.zeros_like(sdf, dtype=np.float32)
+    mask[deep_in] = 1.0
+    mask[deep_out] = 0.0
+    if not boundary.any():  # trivial ROI (fits in one voxel)
+        return mask.reshape(gX.shape), (xs[0], ys[0], zs[0])
+
+    # ------------------------------------------------------------------ #
+    # 3  Adaptive supersampling                                          #
+    # ------------------------------------------------------------------ #
+    ctrs = centres[boundary]
+    idx = np.flatnonzero(boundary)
+    fill_prev = np.full(ctrs.shape[0], 0.5, np.float32)  # dummy
+
+    if cap_mode == "SHAPE_PLUS_PRISM":
+        min_grid = max(min_grid, 5)  # a tad denser for this mode
+
+    grid = max(3, min_grid | 1)  # odd integer ≥ 3
+    level = 0
+
+    while level < max_levels:
+        # Build regular (grid³) offsets in voxel space
+        g = np.linspace(-0.5, 0.5, grid, dtype=np.float32)
+        offsets = (
+            np.stack(np.meshgrid(g, g, g, indexing="ij"), -1)
+            .reshape(-1, 3, order="C")
+            .astype(np.float32)
+        )
+
+        pts = (ctrs[:, None, :] + offsets[None, :, :] * (dx, dy, dz)).reshape(-1, 3)
+        sdf_sub = structure_signed_distance(self, pts, cap_mode=cap_mode, **sd_kwargs)
+        fill = (sdf_sub < 0.0).reshape(-1, offsets.shape[0]).mean(1).astype(np.float32)
+
+        mask[idx] = fill
+
+        # Convergence check -------------------------------------------------
+        if tol is not None:
+            delta = np.abs(fill - fill_prev)
+            unfinished = delta > tol
+        else:
+            unfinished = np.ones_like(fill, dtype=bool)
+
+        if not unfinished.any():
+            break  # ✓ all boundary voxels converged
+
+        # Prepare next round -----------------------------------------------
+        level += 1
+        if level >= max_levels:
+            break
+
+        ctrs = ctrs[unfinished]
+        idx = idx[unfinished]
+        fill_prev = fill[unfinished]
+        grid += 2  # 3 → 5 → 7 → …
+
+    return mask.reshape(gX.shape), (xs[0], ys[0], zs[0])
+
+
+# --------------------------------------------------------------------------- #
+#  Experimental façade (kept for compatibility)                               #
+# --------------------------------------------------------------------------- #
+
+
+def _mask_wrapper_improved(
+    self: Structure,
+    voxel_size: float | Sequence[float] = 0.2,
+    *,
+    cap_mode: str = "SHAPE_ONLY",
+    tol: float | None = 2e-3,
+    max_levels: int = 3,
+    min_grid: int = 3,
+    config: Optional[MaskConfig] = None,  # noqa: D401 – simple pass-through
+    **sd_kwargs,
+):
+    """Improved mask wrapper (currently forwards to `_mask_wrapper`)."""
+    return _mask_wrapper(
         self,
-        np.column_stack([gX.ravel(), gY.ravel(), gZ.ravel()]),
-        cap_mode=mode,
+        voxel_size,
+        cap_mode=cap_mode,
+        tol=tol,
+        max_levels=max_levels,
+        min_grid=min_grid,
         **sd_kwargs,
     )
 
-    # ------------------------------------------------------------------
-    # Boundary-voxel rule
-    # A consistent interior rule (SDF < 0) is used for all modes. This
-    # defines the volume as the set of points where the signed distance is
-    # negative. Note that this point-sampling method can systematically
-    # underestimate the volume of shapes with sharp features (e.g., the
-    # cone caps in SHAPE_ONLY mode). This is a known trade-off of the
-    # algorithm, and is preferable to using non-physical fudge factors.
-    # ------------------------------------------------------------------
-    mask = (sdf < 0.0).reshape(gX.shape)
-
-    return mask, (xs[0], ys[0], zs[0])
-
 
 # --------------------------------------------------------------------------- #
-#  Monkey-patch onto Structure                                                #
+#  Monkey-patch onto `Structure`                                              #
 # --------------------------------------------------------------------------- #
+
+
 def _sd_wrapper(self: Structure, pts, *, cap_mode="SHAPE_ONLY", **kw):
-    """Thin façade so that calling ``roi.signed_distance`` feels natural to
-    end-users."""
-
+    """`roi.signed_distance(…)` façade."""
     return structure_signed_distance(self, pts, cap_mode=cap_mode, **kw)
 
 
 Structure.signed_distance = _sd_wrapper  # type: ignore[attr-defined]
 Structure.mask = _mask_wrapper  # type: ignore[attr-defined]
+Structure.mask_improved = _mask_wrapper_improved  # type: ignore[attr-defined]
 
-__all__ = ["signed_distance_2d"]
+__all__ = ["signed_distance_2d", "structure_signed_distance", "MaskConfig"]
